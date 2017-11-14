@@ -1,0 +1,508 @@
+Afghanistan
+652230 
+Akrotiri
+123 
+Albania
+28748 
+Algeria
+2381741 
+American Samoa
+199 
+Andorra
+468 
+Angola
+1246700 
+Anguilla
+91 
+Antarctica
+14000000 
+Antigua and Barbuda
+442.6  
+Argentina
+2780400 
+Armenia
+29743 
+Aruba
+180 
+Ashmore and Cartier Islands
+5 
+Australia
+7741220 
+Austria
+83871 
+Azerbaijan
+86600 
+Bahamas, The
+13880 
+Bahrain
+760 
+Bangladesh
+143998 
+Barbados
+430 
+Belarus
+207600 
+Belgium
+30528 
+Belize
+22966 
+Benin
+112622 
+Bermuda
+54 
+Bhutan
+38394 
+Bolivia
+1098581 
+Bosnia and Herzegovina
+51197 
+Botswana
+581730 
+Bouvet Island
+49 
+Brazil
+8514877 
+British Indian Ocean Territory
+54400 
+British Virgin Islands
+151 
+Brunei
+5765 
+Bulgaria
+110879 
+Burkina Faso
+274200 
+Burma
+676578 
+Burundi
+27830 
+Cabo Verde
+4033 
+Cambodia
+181035 
+Cameroon
+475440 
+Canada
+9984670 
+Cayman Islands
+264 
+Central African Republic
+622984 
+Chad
+1284000 
+Chile
+756102 
+China
+9596960 
+Christmas Island
+135 
+Clipperton Island
+6 
+Cocos (Keeling) Islands
+14 
+Colombia
+1138910 
+Comoros
+2235 
+Congo, Democratic Republic of the
+2344858 
+Congo, Republic of the
+342000 
+Cook Islands
+236 
+Costa Rica
+51100 
+Cote d'Ivoire
+322463 
+Croatia
+56594 
+Cuba
+110860 
+Curacao
+444 
+Cyprus
+9251 
+Czech Republic
+78867 
+Denmark
+43094 
+Dhekelia
+130.8 
+Djibouti
+23200 
+Dominica
+751 
+Dominican Republic
+48670 
+Ecuador
+283561 
+Egypt
+1001450 
+El Salvador
+21041 
+Equatorial Guinea
+28051 
+Eritrea
+117600 
+Estonia
+45228 
+Ethiopia
+1104300 
+Falkland Islands (Islas Malvinas)
+12173 
+Faroe Islands
+1393 
+Fiji
+18274 
+Finland
+338145 
+France
+643801 
+French Polynesia
+4167 
+Gabon
+267667 
+Gambia, The
+11295 
+Gaza Strip
+360 
+Georgia
+69700 
+Germany
+357022 
+Ghana
+238533 
+Gibraltar
+6.5 
+Greece
+131957 
+Greenland
+2166086 
+Grenada
+344 
+Guam
+544 
+Guatemala
+108889 
+Guernsey
+78 
+Guinea
+245857 
+Guinea-Bissau
+36125 
+Guyana
+214969 
+Haiti
+27750 
+Heard Island and McDonald Islands
+412 
+Holy See (Vatican City)
+0.44 
+Honduras
+112090 
+Hong Kong
+1104 
+Howland Island
+1.6 
+Hungary
+93028 
+Iceland
+103000 
+India
+3287263 
+Indonesia
+1904569 
+Iran
+1648195 
+Iraq
+438317 
+Ireland
+70273 
+Isle of Man
+572 
+Israel
+20770 
+Italy
+301340 
+Jamaica
+10991 
+Jan Mayen
+377 
+Japan
+377915 
+Jarvis Island
+4.5 
+Jersey
+116 
+Johnston Atoll
+2.63 
+Jordan
+89342 
+Kazakhstan
+2724900 
+Kenya
+580367 
+Kingman Reef
+1 
+Kiribati
+811 
+Korea, North
+120538 
+Korea, South
+99720 
+Kosovo
+10887 
+Kuwait
+17818 
+Kyrgyzstan
+199951 
+Laos
+236800 
+Latvia
+64589 
+Lebanon
+10400 
+Lesotho
+30355 
+Liberia
+111369 
+Libya
+1759540 
+Liechtenstein
+160 
+Lithuania
+65300 
+Luxembourg
+2586 
+Macau
+28.2 
+Macedonia
+25713 
+Madagascar
+587041 
+Malawi
+118484 
+Malaysia
+329847 
+Maldives
+298 
+Mali
+1240192 
+Malta
+316 
+Marshall Islands
+181 
+Mauritania
+1030700 
+Mauritius
+2040 
+Mexico
+1964375 
+Micronesia, Federated States of
+702 
+Midway Islands
+6.2 
+Moldova
+33851 
+Monaco
+2 
+Mongolia
+1564116 
+Montenegro
+13812 
+Montserrat
+102 
+Morocco
+446550 
+Mozambique
+799380 
+Namibia
+824292 
+Nauru
+21 
+Navassa Island
+5.4 
+Nepal
+147181 
+Netherlands
+41543 
+New Caledonia
+18575 
+New Zealand
+267710 
+Nicaragua
+130370 
+Niger
+1267000  
+Nigeria
+923768 
+Niue
+260 
+Norfolk Island
+36 
+Northern Mariana Islands
+464 
+Norway
+323802 
+Oman
+309500 
+Pakistan
+796095 
+Palau
+459 
+Palmyra Atoll
+11.9 
+Panama
+75420 
+Papua New Guinea
+462840 
+Paraguay
+406752 
+Peru
+1285216 
+Philippines
+300000 
+Pitcairn Islands
+47 
+Poland
+312685 
+Portugal
+92090 
+Puerto Rico
+13790 
+Qatar
+11586 
+Romania
+238391 
+Russia
+17098242 
+Rwanda
+26338 
+Saint Barthelemy
+21 
+Saint Kitts and Nevis
+261 
+Saint Lucia
+616 
+Saint Martin
+54.4 
+Saint Pierre and Miquelon
+242 
+Saint Vincent and the Grenadines
+389 
+Samoa
+2831 
+San Marino
+61 
+Sao Tome and Principe
+964 
+Saudi Arabia
+2149690 
+Senegal
+196722 
+Serbia
+77474 
+Seychelles
+455 
+Sierra Leone
+71740 
+Singapore
+697 
+Sint Maarten
+34 
+Slovakia
+49035 
+Slovenia
+20273 
+Solomon Islands
+28896 
+Somalia
+637657 
+South Africa
+1219090 
+South Georgia and South Sandwich Islands
+3903 
+South Sudan
+644329 
+Spain
+505370 
+Sri Lanka
+65610 
+Sudan
+1861484 
+Suriname
+163820 
+Svalbard
+62045 
+Swaziland
+17364 
+Sweden
+450295 
+Switzerland
+41277 
+Syria
+185180 
+Taiwan
+35980 
+Tajikistan
+143100 
+Tanzania
+947300 
+Thailand
+513120 
+Timor-Leste
+14874 
+Togo
+56785 
+Tokelau
+12 
+Tonga
+747 
+Trinidad and Tobago
+5128 
+Tunisia
+163610 
+Turkey
+783562 
+Turkmenistan
+488100 
+Turks and Caicos Islands
+948 
+Tuvalu
+26 
+Uganda
+241038 
+Ukraine
+603550 
+United Arab Emirates
+83600 
+United Kingdom
+243610 
+United States
+9826675 
+Uruguay
+176215 
+Uzbekistan
+447400 
+Vanuatu
+12189 
+Venezuela
+912050 
+Vietnam
+331210 
+Virgin Islands
+1910 
+Wake Island
+6.5 
+Wallis and Futuna
+142 
+West Bank
+5860 
+Western Sahara
+266000 
+Yemen
+527968 
+Zambia
+752618 
+Zimbabwe
+390757 

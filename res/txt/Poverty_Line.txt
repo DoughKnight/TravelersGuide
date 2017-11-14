@@ -1,0 +1,457 @@
+Afghanistan
+36%
+Albania
+14.3%
+Algeria
+23%
+American Samoa
+NA%
+Andorra
+NA%
+Angola
+40.5%
+Anguilla
+23%
+Antigua and Barbuda
+NA%
+Argentina
+30%
+Armenia
+35.8%
+Aruba
+NA%
+Australia
+NA%
+Austria
+6.2%
+Azerbaijan
+6%
+Bahamas, The
+9.3%
+Bahrain
+NA%
+Bangladesh
+31.5%
+Barbados
+NA%
+Belarus
+27.1%
+Belgium
+15.2%
+Belize
+41%
+Benin
+37.4%
+Bermuda
+11%
+Bhutan
+12%
+Bolivia
+45%
+Bosnia and Herzegovina
+18.6%
+Botswana
+30.3%
+Brazil
+21.4%
+British Virgin Islands
+NA%
+Brunei
+NA%
+Bulgaria
+21.8%
+Burkina Faso
+46.7%
+Burma
+32.7%
+Burundi
+68%
+Cabo Verde
+30%
+Cambodia
+20%
+Cameroon
+48%
+Canada
+9.4%
+Cayman Islands
+NA%
+Central African Republic
+NA%
+Chad
+80%
+Chile
+15.1%
+China
+6.1%
+Colombia
+32.7%
+Comoros
+60%
+Congo, Democratic Republic of the
+71%
+Congo, Republic of the
+46.5%
+Cook Islands
+NA%
+Costa Rica
+24.8%
+Cote d'Ivoire
+42%
+Croatia
+21.1%
+Cuba
+NA%
+Cyprus
+NA%
+Czech Republic
+9.8%
+Denmark
+13.4%
+Djibouti
+18.8%
+Dominica
+29%
+Dominican Republic
+34.4%
+Ecuador
+25.6%
+Egypt
+22%
+El Salvador
+36.5%
+Equatorial Guinea
+NA%
+Eritrea
+50%
+Estonia
+17.5%
+Ethiopia
+39%
+European Union
+Falkland Islands (Islas Malvinas)
+NA%
+Faroe Islands
+NA%
+Fiji
+31%
+Finland
+NA%
+France
+7.9%
+French Polynesia
+19.7%
+Gabon
+NA%
+Gambia, The
+48.4%
+Gaza Strip
+38%
+Georgia
+9.2%
+Germany
+15.5%
+Ghana
+28.5%
+Gibraltar
+NA%
+Greece
+20%
+Greenland
+9.2%
+Grenada
+38%
+Guam
+23%
+Guatemala
+54%
+Guernsey
+NA%
+Guinea
+47%
+Guinea-Bissau
+NA%
+Guyana
+35%
+Haiti
+80%
+Holy See (Vatican City)
+NA%
+Honduras
+60%
+Hong Kong
+19.6%
+Hungary
+14%
+Iceland
+NA%
+India
+29.8%
+Indonesia
+11.7%
+Iran
+18.7%
+Iraq
+25%
+Ireland
+5.5%
+Isle of Man
+NA%
+Israel
+21%
+Italy
+29.9%
+Jamaica
+16.5%
+Japan
+16%
+Jersey
+NA%
+Jordan
+14.2%
+Kazakhstan
+5.3%
+Kenya
+43.4%
+Kiribati
+NA%
+Korea, North
+NA%
+Korea, South
+16%
+Kosovo
+30%
+Kuwait
+NA%
+Kyrgyzstan
+33.7%
+Laos
+22%
+Latvia
+NA%
+Lebanon
+28%
+Lesotho
+49%
+Liberia
+80%
+Libya
+NA%
+Liechtenstein
+NA%
+Lithuania
+4%
+Luxembourg
+NA%
+Macau
+NA%
+Macedonia
+30.4%
+Madagascar
+50%
+Malawi
+53%
+Malaysia
+3.8%
+Maldives
+16%
+Mali
+36.1%
+Malta
+15.1%
+Marshall Islands
+NA%
+Mauritania
+40%
+Mauritius
+8%
+Mexico
+52.3%
+Micronesia, Federated States of
+26.7%
+Moldova
+21.9%
+Monaco
+NA%
+Mongolia
+29.8%
+Montenegro
+6.6%
+Montserrat
+NA%
+Morocco
+15%
+Mozambique
+52%
+Namibia
+28.7%
+Nauru
+NA%
+Nepal
+25.2%
+Netherlands
+9.1%
+New Caledonia
+NA%
+New Zealand
+NA%
+Nicaragua
+42.5%
+Niger
+63%
+Nigeria
+70%
+Niue
+NA%
+Northern Mariana Islands
+NA%
+Norway
+NA%
+Oman
+NA%
+Pakistan
+22.3%
+Palau
+NA%
+Panama
+26%
+Papua New Guinea
+37%
+Paraguay
+34.7%
+Peru
+25.8%
+Philippines
+26.5%
+Poland
+10.6%
+Portugal
+18%
+Puerto Rico
+NA%
+Qatar
+NA%
+Romania
+22.2%
+Russia
+11%
+Rwanda
+44.9%
+Saint Helena, Ascension, and Tristan da Cunha
+NA%
+Saint Kitts and Nevis
+NA%
+Saint Lucia
+NA%
+Saint Pierre and Miquelon
+NA%
+Saint Vincent and the Grenadines
+NA%
+Samoa
+NA%
+San Marino
+NA%
+Sao Tome and Principe
+66.2%
+Saudi Arabia
+NA%
+Senegal
+54%
+Serbia
+9.1%
+Seychelles
+NA%
+Sierra Leone
+70.2%
+Singapore
+NA%
+Slovakia
+21%
+Slovenia
+13.5%
+Solomon Islands
+NA%
+Somalia
+NA%
+South Africa
+31.3%
+South Sudan
+50.6%
+Spain
+21.1%
+Sri Lanka
+8.9%
+Sudan
+46.5%
+Suriname
+70%
+Swaziland
+69%
+Sweden
+NA%
+Switzerland
+7.6%
+Syria
+11.9%
+Taiwan
+1.5%
+Tajikistan
+35.6%
+Tanzania
+36%
+Thailand
+13.2%
+Timor-Leste
+41%
+Togo
+32%
+Tokelau
+NA%
+Tonga
+24%
+Trinidad and Tobago
+17%
+Tunisia
+3.8%
+Turkey
+16.9%
+Turkmenistan
+30%
+Turks and Caicos Islands
+NA%
+Tuvalu
+NA%
+Uganda
+24.5%
+Ukraine
+24.1%
+United Arab Emirates
+19.5%
+United Kingdom
+16.2%
+United States
+15.1%
+Uruguay
+18.6%
+Uzbekistan
+17%
+Vanuatu
+NA%
+Venezuela
+31.6%
+Vietnam
+11.3%
+Virgin Islands
+28.9%
+Wallis and Futuna
+NA%
+West Bank
+18.3%
+Western Sahara
+NA%
+Yemen
+45.2%
+Zambia
+60.5%
+Zimbabwe
+68%
