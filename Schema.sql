@@ -9,12 +9,13 @@ CREATE TABLE Country (
 
 CREATE TABLE User (
     uID INT,
-    name VARCHAR(20),
+    firstname VARCHAR(20),
+    lastname VARCHAR(20),
     age INT,
     email VARCHAR(30),
     language VARCHAR(20) REFERENCES Language(name),
     avatar VARCHAR(50),
-    country VARCHAR(20) REFERENCES Country(name),
+    country VARCHAR(40) REFERENCES Country(name),
     PRIMARY KEY(uID)
 );
 
@@ -27,15 +28,15 @@ CREATE TABLE Connection (
 
 CREATE TABLE Recommendation (
     uID INT REFERENCES User(uID),
-    name VARCHAR(20) REFERENCES Country(name),
+    name VARCHAR(40) REFERENCES Country(name),
     stars INT,
     opinion VARCHAR(200),
     PRIMARY KEY(uID, name)
 );
 
 CREATE TABLE Boundaries (
-    name1 VARCHAR(20) REFERENCES Country(name),
-    name2 VARCHAR(20) REFERENCES Country(name),
+    name1 VARCHAR(40) REFERENCES Country(name),
+    name2 VARCHAR(40) REFERENCES Country(name),
     length INT,
     PRIMARY KEY(name1, name2)
 );
@@ -43,18 +44,18 @@ CREATE TABLE Boundaries (
 CREATE TABLE Languages (
     id INT PRIMARY KEY,
     name VARCHAR(20),
-    country VARCHAR(20) REFERENCES Country(name),
+    country VARCHAR(40) REFERENCES Country(name),
     percent FLOAT
 );
 
 CREATE TABLE Industries (
     id INT PRIMARY KEY,
-    country VARCHAR(20) REFERENCES Country(name),
+    country VARCHAR(40) REFERENCES Country(name),
     industry VARCHAR(20)
 );
 
 CREATE TABLE Economy (
-    country VARCHAR(20) REFERENCES Country(name),
+    country VARCHAR(40) REFERENCES Country(name),
     growthRate FLOAT,
     perCapita INT,
     agricultural FLOAT,
