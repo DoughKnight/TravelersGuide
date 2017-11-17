@@ -43,7 +43,7 @@ CREATE TABLE Boundaries (
 
 CREATE TABLE Languages (
     id INT PRIMARY KEY,
-    name VARCHAR(20),
+    name VARCHAR(30),
     country VARCHAR(40) REFERENCES Country(name),
     percent FLOAT
 );

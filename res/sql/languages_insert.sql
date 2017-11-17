@@ -564,7 +564,6 @@ INSERT INTO Languages VALUES(562, "Tatar", "Russia", 3);
 INSERT INTO Languages VALUES(563, "Swahili", "Rwanda", 0.02);
 INSERT INTO Languages(id, name, country) VALUES(564, "French", "Saint Barthelemy");
 INSERT INTO Languages(id, name, country) VALUES(565, "English", "Saint Barthelemy");
-INSERT INTO Languages(id, name, country) VALUES(566, "English", "Saint Helena, Ascension, and Tristan da Cunha");
 INSERT INTO Languages(id, name, country) VALUES(567, "English", "Saint Kitts and Nevis");
 INSERT INTO Languages(id, name, country) VALUES(568, "English", "Saint Lucia");
 INSERT INTO Languages(id, name, country) VALUES(569, "French", "Saint Martin");
