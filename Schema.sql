@@ -51,7 +51,8 @@ CREATE TABLE Languages (
 CREATE TABLE Industries (
     id INT PRIMARY KEY,
     country VARCHAR(40) REFERENCES Country(name),
-    industry VARCHAR(20)
+    industry VARCHAR(70),
+    notes varchar(200)
 );
 
 CREATE TABLE Economy (
