@@ -7,8 +7,8 @@ CREATE TABLE Country (
     PRIMARY KEY(name)
 );
 
-CREATE TABLE User (
-    uID INT,
+CREATE TABLE Users(
+    userID INT,
     firstname VARCHAR(20),
     lastname VARCHAR(20),
     age INT,
@@ -16,22 +16,24 @@ CREATE TABLE User (
     language VARCHAR(20) REFERENCES Language(name),
     avatar VARCHAR(50),
     country VARCHAR(40) REFERENCES Country(name),
-    PRIMARY KEY(uID)
+    PRIMARY KEY(userID)
 );
 
+INSERT INTO Users VALUES (-1, "Admin", "Istrator", -1, "admin@travelersguide.com", "English", "default.png", "United States");
+
 CREATE TABLE Connection (
-    uID1 INT REFERENCES User(uID),
-    uID2 INT REFERENCES User(uID),
+    userID1 INT REFERENCES Users(userID),
+    userID2 INT REFERENCES Users(userID),
     meetDate DATE,
-    PRIMARY KEY(uID1, uID2)
+    PRIMARY KEY(userID1, userID2)
 );
 
 CREATE TABLE Recommendation (
-    uID INT REFERENCES User(uID),
+    userID INT REFERENCES Users(userID),
     name VARCHAR(40) REFERENCES Country(name),
     stars INT,
     opinion VARCHAR(200),
-    PRIMARY KEY(uID, name)
+    PRIMARY KEY(userID, name)
 );
 
 CREATE TABLE Boundaries (
@@ -55,55 +57,25 @@ CREATE TABLE Industries (
     notes varchar(200)
 );
 
-CREATE TABLE Economy (
-    country VARCHAR(40) REFERENCES Country(name),
-    growthRate FLOAT,
-    perCapita INT,
-    agricultural FLOAT,
-    industry FLOAT,
-    services FLOAT,
-    povertyLine FLOAT,
-    PRIMARY KEY(country)
-);
-
 DELIMITER //
-CREATE TRIGGER SumLanguage
-AFTER UPDATE ON Languages
+CREATE TRIGGER firstConnection
+AFTER INSERT ON Users
 FOR EACH ROW
 BEGIN
-    UPDATE Languages
-    SET percent = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT percent FROM Languages AS l WHERE l.country = NEW.country)
-    OR 100 <> (SELECT SUM(percent) FROM Languages AS l2 WHERE l2.country = NEW.country));
+    INSERT INTO Connection
+    VALUES (NEW.userID, -1, CURRENT_DATE);
+    INSERT INTO Connection
+    VALUES (-1, NEW.userID, CURRENT_DATE);
 END//
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER SumEcon
-AFTER UPDATE ON Economy
+CREATE TRIGGER distinctAvatar
+BEFORE UPDATE ON Users
 FOR EACH ROW
 BEGIN
-    UPDATE Economy
-    SET agriculture = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT agriculture FROM Economy as c WHERE c.country = NEW.country)
-        OR 0 IN (SELECT industry FROM Economy as c2  WHERE c2.country = NEW.country)
-        OR 0 IN (SELECT services FROM Economy as c3 WHERE c3.country = NEW.country)
-        OR 100 <> (SELECT (c4.agriculture + c4.industry + c4.services) as total FROM Economy as c4 WHERE c4.country = NEW.country));
-    UPDATE Economy
-    SET industry = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT agriculture FROM Economy as c WHERE c.country = NEW.country)
-        OR 0 IN (SELECT industry FROM Economy as c2  WHERE c2.country = NEW.country)
-        OR 0 IN (SELECT services FROM Economy as c3 WHERE c3.country = NEW.country)
-        OR 100 <> (SELECT (c4.agriculture + c4.industry + c4.services) as total FROM Economy as c4 WHERE c4.country = NEW.country));
-    UPDATE Economy
-    SET services = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT agriculture FROM Economy as c WHERE c.country = NEW.country)
-        OR 0 IN (SELECT industry FROM Economy as c2  WHERE c2.country = NEW.country)
-        OR 0 IN (SELECT services FROM Economy as c3 WHERE c3.country = NEW.country)
-        OR 100 <> (SELECT (c4.agriculture + c4.industry + c4.services) as total FROM Economy as c4 WHERE c4.country = NEW.country));
+    IF NEW.avatar IN (SELECT avatar FROM Users) THEN
+        SET NEW.avatar = OLD.avatar;
+    END IF;
 END//
 DELIMITER ;

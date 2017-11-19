@@ -7,8 +7,8 @@ CREATE TABLE Country (
     PRIMARY KEY(name)
 );
 
-CREATE TABLE User (
-    uID INT,
+CREATE TABLE Users (
+    userID INT,
     firstname VARCHAR(20),
     lastname VARCHAR(20),
     age INT,
@@ -16,22 +16,24 @@ CREATE TABLE User (
     language VARCHAR(20) REFERENCES Language(name),
     avatar VARCHAR(50),
     country VARCHAR(40) REFERENCES Country(name),
-    PRIMARY KEY(uID)
+    PRIMARY KEY(userID)
 );
 
+INSERT INTO Users VALUES (-1, "Admin", "Istrator", -1, "admin@travelersguide.com", "English", "default.png", "United States");
+
 CREATE TABLE Connection (
-    uID1 INT REFERENCES User(uID),
-    uID2 INT REFERENCES User(uID),
+    userID1 INT REFERENCES Users(userID),
+    userID2 INT REFERENCES Users(userID),
     meetDate DATE,
-    PRIMARY KEY(uID1, uID2)
+    PRIMARY KEY(userID1, userID2)
 );
 
 CREATE TABLE Recommendation (
-    uID INT REFERENCES User(uID),
+    userID INT REFERENCES Users(userID),
     name VARCHAR(40) REFERENCES Country(name),
     stars INT,
     opinion VARCHAR(200),
-    PRIMARY KEY(uID, name)
+    PRIMARY KEY(userID, name)
 );
 
 CREATE TABLE Boundaries (
@@ -55,56 +57,26 @@ CREATE TABLE Industries (
     notes VARCHAR(200)
 );
 
-CREATE TABLE Economy (
-    country VARCHAR(40) REFERENCES Country(name),
-    growthRate FLOAT,
-    perCapita INT,
-    agricultural FLOAT,
-    industry FLOAT,
-    services FLOAT,
-    povertyLine FLOAT,
-    PRIMARY KEY(country)
-);
-
 DELIMITER //
-CREATE TRIGGER SumLanguage
-AFTER UPDATE ON Languages
+CREATE TRIGGER firstConnection
+AFTER INSERT ON Users
 FOR EACH ROW
 BEGIN
-    UPDATE Languages
-    SET percent = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT percent FROM Languages AS l WHERE l.country = NEW.country)
-    OR 100 <> (SELECT SUM(percent) FROM Languages AS l2 WHERE l2.country = NEW.country));
+    INSERT INTO Connection
+    VALUES (NEW.userID, -1, CURRENT_DATE);
+    INSERT INTO Connection
+    VALUES (-1, NEW.userID, CURRENT_DATE);
 END//
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER SumEcon
-AFTER UPDATE ON Economy
+CREATE TRIGGER distinctAvatar
+BEFORE UPDATE ON Users
 FOR EACH ROW
 BEGIN
-    UPDATE Economy
-    SET agriculture = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT agriculture FROM Economy as c WHERE c.country = NEW.country)
-        OR 0 IN (SELECT industry FROM Economy as c2  WHERE c2.country = NEW.country)
-        OR 0 IN (SELECT services FROM Economy as c3 WHERE c3.country = NEW.country)
-        OR 100 <> (SELECT (c4.agriculture + c4.industry + c4.services) as total FROM Economy as c4 WHERE c4.country = NEW.country));
-    UPDATE Economy
-    SET industry = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT agriculture FROM Economy as c WHERE c.country = NEW.country)
-        OR 0 IN (SELECT industry FROM Economy as c2  WHERE c2.country = NEW.country)
-        OR 0 IN (SELECT services FROM Economy as c3 WHERE c3.country = NEW.country)
-        OR 100 <> (SELECT (c4.agriculture + c4.industry + c4.services) as total FROM Economy as c4 WHERE c4.country = NEW.country));
-    UPDATE Economy
-    SET services = 0
-    WHERE country = NEW.country
-    AND (0 IN (SELECT agriculture FROM Economy as c WHERE c.country = NEW.country)
-        OR 0 IN (SELECT industry FROM Economy as c2  WHERE c2.country = NEW.country)
-        OR 0 IN (SELECT services FROM Economy as c3 WHERE c3.country = NEW.country)
-        OR 100 <> (SELECT (c4.agriculture + c4.industry + c4.services) as total FROM Economy as c4 WHERE c4.country = NEW.country));
+    IF NEW.avatar IN (SELECT avatar FROM Users) THEN
+        SET NEW.avatar = OLD.avatar;
+    END IF;
 END//
 DELIMITER ;
 
@@ -617,256 +589,256 @@ INSERT INTO Country VALUES ("Zambia", "The territory of Northern Rhodesia was ad
 INSERT INTO Country VALUES ("Zimbabwe", "The UK annexed Southern Rhodesia from the [British] South Africa Company in 1923. A 1961 constitution was formulated that favored whites in power. In 1965 the government unilaterally declared its independence, but the UK did not recognize the act and demanded more complete voting rights for the black African majority in the country (then called Rhodesia). UN sanctions and a guerrilla uprising finally led to free elections in 1979 and independence (as Zimbabwe) in 1980. Robert MUGABE, the nation's first prime minister, has been the country's only ruler (as president since 1987) and has dominated the country's political system since independence. His chaotic land redistribution campaign, which began in 1997 and intensified after 2000, caused an exodus of white farmers, crippled the economy, and ushered in widespread shortages of basic commodities. Ignoring international condemnation, MUGABE rigged the 2002 presidential election to ensure his reelection. In April 2005, the capital city of Harare embarked on Operation Restore Order, ostensibly an urban rationalization program, which resulted in the destruction of the homes or businesses of 700,000 mostly poor supporters of the opposition. President MUGABE in June 2007 instituted price controls on all basic commodities causing panic buying and leaving store shelves empty for months; a period of increasing hyperinflation ensued. General elections held in March 2008 contained irregularities but still amounted to a censure of the ZANU-PF-led government with the opposition winning a majority of seats in parliament. MDC-T opposition leader Morgan TSVANGIRAI won the most votes in the presidential polls, but not enough to win outright. In the lead up to a run-off election in late June 2008, considerable violence enacted against opposition party members led to the withdrawal of TSVANGIRAI from the ballot. Extensive evidence of violence and intimidation resulted in international condemnation of the process. Difficult negotiations over a power-sharing ''government of national unity,'' in which MUGABE remained president and TSVANGIRAI became prime minister, were finally settled in February 2009, although the leaders failed to agree upon many key outstanding governmental issues. MUGABE was reelected president in June 2013 in balloting that was severely flawed and internationally condemned. As a prerequisite to holding the elections, Zimbabwe enacted a new constitution by referendum, although many provisions in the new constitution have yet to be codified in law. ", 20.00, 30.00, 390757);
 
 
-INSERT INTO User VALUES (0, "Sharyl", "Brantley", 27, "shabrantley@hotmail.com", "EN", "", "Mauritius");
-INSERT INTO User VALUES (1, "Efren", "Maxwell", 16, "efrmaxwell@hotmail.com", "ES", "", "Madagascar");
-INSERT INTO User VALUES (2, "Kaydence", "Brennan", 23, "kaybrennan@sbcglobal.net", "ES", "", "Honduras");
-INSERT INTO User VALUES (3, "Moses", "Christensen", 84, "moschristensen@facebook.com", "ES", "", "Germany");
-INSERT INTO User VALUES (4, "Alvera", "Holliday", 35, "alvholliday@yahoo.com", "EN", "", "Heard Island and McDonald Islands");
-INSERT INTO User VALUES (5, "Moriah", "Sheets", 22, "morsheets@hotmail.com", "ES", "", "Faroe Islands");
-INSERT INTO User VALUES (6, "Kamryn", "Craig", 60, "kamcraig@aol.com", "EN", "", "Burundi");
-INSERT INTO User VALUES (7, "Baby", "Morris", 15, "babmorris@aol.com", "EN", "", "Bhutan");
-INSERT INTO User VALUES (8, "Leann", "Willey", 67, "leawilley@hotmail.com", "EN", "", "Algeria");
-INSERT INTO User VALUES (9, "Kimberlie", "Edmonds", 33, "kimedmonds@aol.com", "ES", "", "Canada");
-INSERT INTO User VALUES (10, "Crockett", "Sylvester", 55, "crosylvester@yahoo.com", "EN", "", "Bouvet Island");
-INSERT INTO User VALUES (11, "Gloria", "Redding", 72, "gloredding@gmail.com", "EN", "", "Ethiopia");
-INSERT INTO User VALUES (12, "Willie", "Costello", 62, "wilcostello@yahoo.com", "EN", "", "Comoros");
-INSERT INTO User VALUES (13, "Ellie", "Yazzie", 27, "ellyazzie@facebook.com", "ES", "", "Faroe Islands");
-INSERT INTO User VALUES (14, "Sherwin", "Chaney", 36, "shechaney@yahoo.com", "ES", "", "Syria");
-INSERT INTO User VALUES (15, "Goldie", "Murdock", 79, "golmurdock@yahoo.com", "ES", "", "French Polynesia");
-INSERT INTO User VALUES (16, "Albin", "Mansfield", 91, "albmansfield@sbcglobal.net", "ES", "", "Liechtenstein");
-INSERT INTO User VALUES (17, "Dina", "Carmona", 73, "dincarmona@mail.ru", "ES", "", "Palmyra Atoll");
-INSERT INTO User VALUES (18, "Matthias", "Mercer", 81, "matmercer@mail.ru", "ES", "", "Senegal");
-INSERT INTO User VALUES (19, "Alda", "Terrell", 27, "aldterrell@aol.com", "ES", "", "Micronesia, Federated States of");
-INSERT INTO User VALUES (20, "Edw", "Huntley", 30, "edwhuntley@sbcglobal.net", "EN", "", "Niue");
-INSERT INTO User VALUES (21, "Tucker", "Meade", 25, "tucmeade@hotmail.com", "EN", "", "Andorra");
-INSERT INTO User VALUES (22, "Vergie", "Toth", 28, "vertoth@sbcglobal.net", "EN", "", "Estonia");
-INSERT INTO User VALUES (23, "Yaritza", "Greer", 43, "yargreer@mail.ru", "ES", "", "Luxembourg");
-INSERT INTO User VALUES (24, "Isidro", "Curtis", 73, "isicurtis@aol.com", "ES", "", "Morocco");
-INSERT INTO User VALUES (25, "Aditya", "Livingston", 17, "adilivingston@facebook.com", "EN", "", "Brunei");
-INSERT INTO User VALUES (26, "Anais", "Felix", 25, "anafelix@facebook.com", "EN", "", "Iceland");
-INSERT INTO User VALUES (27, "Reuben", "Lemon", 67, "reulemon@sbcglobal.net", "EN", "", "Luxembourg");
-INSERT INTO User VALUES (28, "Johnie", "Schafer", 39, "johschafer@facebook.com", "EN", "", "British Virgin Islands");
-INSERT INTO User VALUES (29, "Rutha", "Esposito", 45, "rutesposito@gmail.com", "EN", "", "Benin");
-INSERT INTO User VALUES (30, "Webb", "Sample", 24, "websample@mail.ru", "ES", "", "Latvia");
-INSERT INTO User VALUES (31, "Rubye", "Craven", 54, "rubcraven@gmail.com", "EN", "", "Gibraltar");
-INSERT INTO User VALUES (32, "Merilyn", "Edmondson", 36, "meredmondson@hotmail.com", "ES", "", "Howland Island");
-INSERT INTO User VALUES (33, "Nathaly", "Stacy", 52, "natstacy@gmail.com", "EN", "", "Tonga");
-INSERT INTO User VALUES (34, "Latifah", "Marshall", 24, "latmarshall@hotmail.com", "ES", "", "West Bank");
-INSERT INTO User VALUES (35, "Chalmer", "Finley", 73, "chafinley@sbcglobal.net", "ES", "", "Oman");
-INSERT INTO User VALUES (36, "Jaidyn", "Wolfe", 75, "jaiwolfe@aol.com", "ES", "", "Slovenia");
-INSERT INTO User VALUES (37, "Kalyn", "Platt", 20, "kalplatt@gmail.com", "ES", "", "Croatia");
-INSERT INTO User VALUES (38, "Rillie", "Donovan", 68, "rildonovan@hotmail.com", "ES", "", "Brunei");
-INSERT INTO User VALUES (39, "Lakeisha", "Frost", 46, "lakfrost@aol.com", "EN", "", "Austria");
-INSERT INTO User VALUES (40, "Jaquez", "Meza", 64, "jaqmeza@sbcglobal.net", "ES", "", "Hungary");
-INSERT INTO User VALUES (41, "Carmella", "Hartman", 30, "carhartman@hotmail.com", "ES", "", "Suriname");
-INSERT INTO User VALUES (42, "Henderson", "Paris", 32, "henparis@hotmail.com", "ES", "", "Serbia");
-INSERT INTO User VALUES (43, "Mozella", "Inman", 71, "mozinman@hotmail.com", "ES", "", "Andorra");
-INSERT INTO User VALUES (44, "Alivia", "Grayson", 18, "aligrayson@sbcglobal.net", "EN", "", "Burundi");
-INSERT INTO User VALUES (45, "Dossie", "Hodge", 63, "doshodge@sbcglobal.net", "EN", "", "Mauritania");
-INSERT INTO User VALUES (46, "Alvina", "Dutton", 57, "alvdutton@mail.ru", "ES", "", "Botswana");
-INSERT INTO User VALUES (47, "Jaquan", "Mock", 41, "jaqmock@gmail.com", "EN", "", "Ethiopia");
-INSERT INTO User VALUES (48, "Burton", "Gillis", 63, "burgillis@yahoo.com", "ES", "", "Hungary");
-INSERT INTO User VALUES (49, "Carleton", "Madrid", 14, "carmadrid@mail.ru", "ES", "", "Syria");
-INSERT INTO User VALUES (50, "Millie", "Lara", 43, "millara@aol.com", "EN", "", "Saint Martin");
-INSERT INTO User VALUES (51, "Woodroe", "Stafford", 46, "woostafford@mail.ru", "ES", "", "Northern Mariana Islands");
-INSERT INTO User VALUES (52, "Vere", "Redmond", 24, "verredmond@sbcglobal.net", "ES", "", "Algeria");
-INSERT INTO User VALUES (53, "Denzil", "Dowling", 73, "dendowling@aol.com", "ES", "", "Ireland");
-INSERT INTO User VALUES (54, "Addison", "Walden", 55, "addwalden@aol.com", "EN", "", "Iceland");
-INSERT INTO User VALUES (55, "Sada", "Nicholson", 82, "sadnicholson@sbcglobal.net", "EN", "", "Marshall Islands");
-INSERT INTO User VALUES (56, "Lavar", "Caudill", 35, "lavcaudill@gmail.com", "EN", "", "Turkey");
-INSERT INTO User VALUES (57, "Jayvon", "Pugh", 47, "jaypugh@hotmail.com", "ES", "", "Latvia");
-INSERT INTO User VALUES (58, "Kourtney", "Denton", 90, "koudenton@mail.ru", "ES", "", "Cote d'Ivoire");
-INSERT INTO User VALUES (59, "Janell", "Madrid", 74, "janmadrid@facebook.com", "ES", "", "Jersey");
-INSERT INTO User VALUES (60, "Humphrey", "Hoskins", 39, "humhoskins@aol.com", "EN", "", "Gambia, The");
-INSERT INTO User VALUES (61, "Nyah", "Hollis", 62, "nyahollis@hotmail.com", "EN", "", "Northern Mariana Islands");
-INSERT INTO User VALUES (62, "Kirt", "Crook", 59, "kircrook@aol.com", "EN", "", "Slovenia");
-INSERT INTO User VALUES (63, "Laurence", "Rangel", 14, "laurangel@facebook.com", "ES", "", "Saint Kitts and Nevis");
-INSERT INTO User VALUES (64, "Ingrid", "Calvert", 18, "ingcalvert@mail.ru", "ES", "", "Saint Martin");
-INSERT INTO User VALUES (65, "Jasmin", "Funk", 67, "jasfunk@mail.ru", "ES", "", "Congo, Republic of the");
-INSERT INTO User VALUES (66, "Harrold", "Couture", 77, "harcouture@mail.ru", "ES", "", "Portugal");
-INSERT INTO User VALUES (67, "Jazmyne", "Krause", 46, "jazkrause@hotmail.com", "ES", "", "Tajikistan");
-INSERT INTO User VALUES (68, "Zita", "Harms", 82, "zitharms@facebook.com", "ES", "", "Laos");
-INSERT INTO User VALUES (69, "Cherelle", "Magee", 49, "chemagee@facebook.com", "ES", "", "Micronesia, Federated States of");
-INSERT INTO User VALUES (70, "Sidney", "Nava", 36, "sidnava@hotmail.com", "ES", "", "Maldives");
-INSERT INTO User VALUES (71, "Darold", "Beard", 13, "darbeard@mail.ru", "ES", "", "Kingman Reef");
-INSERT INTO User VALUES (72, "Hassan", "Duffy", 61, "hasduffy@hotmail.com", "EN", "", "Falkland Islands (Islas Malvinas)");
-INSERT INTO User VALUES (73, "Chynna", "Looney", 18, "chylooney@gmail.com", "ES", "", "Kuwait");
-INSERT INTO User VALUES (74, "Charlie", "Hinds", 21, "chahinds@aol.com", "ES", "", "Equatorial Guinea");
-INSERT INTO User VALUES (75, "Elia", "Prince", 38, "eliprince@facebook.com", "EN", "", "Aruba");
-INSERT INTO User VALUES (76, "Bernardo", "Winkler", 65, "berwinkler@sbcglobal.net", "EN", "", "Faroe Islands");
-INSERT INTO User VALUES (77, "Deena", "Billings", 47, "deebillings@yahoo.com", "ES", "", "Iraq");
-INSERT INTO User VALUES (78, "Tatyana", "Mccormack", 45, "tatmccormack@gmail.com", "ES", "", "Central African Republic");
-INSERT INTO User VALUES (79, "Annetta", "Torrez", 71, "anntorrez@mail.ru", "ES", "", "Italy");
-INSERT INTO User VALUES (80, "Allean", "Choi", 38, "allchoi@mail.ru", "ES", "", "Paraguay");
-INSERT INTO User VALUES (81, "Hobson", "Hinojosa", 13, "hobhinojosa@sbcglobal.net", "EN", "", "Slovenia");
-INSERT INTO User VALUES (82, "Severt", "Crow", 43, "sevcrow@mail.ru", "ES", "", "Norfolk Island");
-INSERT INTO User VALUES (83, "Bryana", "Reid", 27, "bryreid@gmail.com", "EN", "", "Bahamas, The");
-INSERT INTO User VALUES (84, "Trevon", "Melendez", 54, "tremelendez@gmail.com", "EN", "", "Japan");
-INSERT INTO User VALUES (85, "Nevada", "Lorenz", 86, "nevlorenz@sbcglobal.net", "ES", "", "El Salvador");
-INSERT INTO User VALUES (86, "Trey", "Bland", 87, "trebland@gmail.com", "ES", "", "Zimbabwe");
-INSERT INTO User VALUES (87, "Normand", "Bartholomew", 85, "norbartholomew@aol.com", "EN", "", "Pitcairn Islands");
-INSERT INTO User VALUES (88, "Henretta", "Melvin", 38, "henmelvin@facebook.com", "EN", "", "United Arab Emirates");
-INSERT INTO User VALUES (89, "Cressie", "Ivy", 55, "creivy@mail.ru", "ES", "", "Greece");
-INSERT INTO User VALUES (90, "Triston", "Hewitt", 57, "trihewitt@sbcglobal.net", "EN", "", "Canada");
-INSERT INTO User VALUES (91, "Emmons", "Huston", 13, "emmhuston@aol.com", "EN", "", "El Salvador");
-INSERT INTO User VALUES (92, "Wood", "Cannon", 75, "woocannon@mail.ru", "EN", "", "Saint Lucia");
-INSERT INTO User VALUES (93, "Kade", "Pena", 15, "kadpena@sbcglobal.net", "ES", "", "San Marino");
-INSERT INTO User VALUES (94, "Nunzio", "Flint", 24, "nunflint@yahoo.com", "ES", "", "Argentina");
-INSERT INTO User VALUES (95, "Athena", "Bergeron", 91, "athbergeron@yahoo.com", "EN", "", "Sudan");
-INSERT INTO User VALUES (96, "Junior", "Hinojosa", 40, "junhinojosa@sbcglobal.net", "ES", "", "Saint Barthelemy");
-INSERT INTO User VALUES (97, "Cleve", "Mabry", 63, "clemabry@aol.com", "ES", "", "India");
-INSERT INTO User VALUES (98, "Cordella", "Thorne", 82, "corthorne@sbcglobal.net", "EN", "", "Estonia");
-INSERT INTO User VALUES (99, "Holland", "Blake", 48, "holblake@hotmail.com", "EN", "", "West Bank");
-INSERT INTO User VALUES (100, "Salina", "Sterling", 43, "salsterling@hotmail.com", "EN", "", "Virgin Islands");
-INSERT INTO User VALUES (101, "Dale", "Butcher", 57, "dalbutcher@yahoo.com", "ES", "", "Azerbaijan");
-INSERT INTO User VALUES (102, "Tandy", "Abernathy", 31, "tanabernathy@mail.ru", "EN", "", "Liberia");
-INSERT INTO User VALUES (103, "Dejon", "Schneider", 71, "dejschneider@yahoo.com", "ES", "", "Austria");
-INSERT INTO User VALUES (104, "Estell", "Upton", 13, "estupton@gmail.com", "ES", "", "Gibraltar");
-INSERT INTO User VALUES (105, "Jaden", "Mcmullen", 74, "jadmcmullen@aol.com", "EN", "", "United Kingdom");
-INSERT INTO User VALUES (106, "Genesis", "Lockwood", 16, "genlockwood@aol.com", "ES", "", "American Samoa");
-INSERT INTO User VALUES (107, "Kyle", "Russ", 33, "kylruss@mail.ru", "EN", "", "Azerbaijan");
-INSERT INTO User VALUES (108, "Norman", "Machado", 19, "normachado@yahoo.com", "ES", "", "Belarus");
-INSERT INTO User VALUES (109, "Ashtyn", "Lam", 23, "ashlam@gmail.com", "ES", "", "Micronesia, Federated States of");
-INSERT INTO User VALUES (110, "Malissa", "Worley", 84, "malworley@aol.com", "ES", "", "New Caledonia");
-INSERT INTO User VALUES (111, "Belinda", "Bliss", 57, "belbliss@yahoo.com", "ES", "", "Chad");
-INSERT INTO User VALUES (112, "Markel", "Sloan", 90, "marsloan@aol.com", "EN", "", "Cayman Islands");
-INSERT INTO User VALUES (113, "Desiree", "Flint", 52, "desflint@hotmail.com", "ES", "", "Iran");
-INSERT INTO User VALUES (114, "Berdie", "Lang", 31, "berlang@yahoo.com", "EN", "", "Argentina");
-INSERT INTO User VALUES (115, "Lauretta", "Holloway", 57, "lauholloway@mail.ru", "EN", "", "Austria");
-INSERT INTO User VALUES (116, "Fredy", "Bradford", 54, "frebradford@aol.com", "EN", "", "Jordan");
-INSERT INTO User VALUES (117, "Jaliyah", "Akers", 85, "jalakers@facebook.com", "ES", "", "Chad");
-INSERT INTO User VALUES (118, "Travis", "Swartz", 49, "traswartz@gmail.com", "ES", "", "Brazil");
-INSERT INTO User VALUES (119, "Arbie", "Begay", 49, "arbbegay@mail.ru", "EN", "", "Palmyra Atoll");
-INSERT INTO User VALUES (120, "Roland", "Abraham", 51, "rolabraham@facebook.com", "ES", "", "Egypt");
-INSERT INTO User VALUES (121, "Dellia", "Odell", 18, "delodell@hotmail.com", "ES", "", "Zimbabwe");
-INSERT INTO User VALUES (122, "Susanne", "Bourgeois", 29, "susbourgeois@hotmail.com", "ES", "", "Ireland");
-INSERT INTO User VALUES (123, "Janel", "Moody", 31, "janmoody@facebook.com", "ES", "", "British Indian Ocean Territory");
-INSERT INTO User VALUES (124, "Elaina", "Rubio", 25, "elarubio@aol.com", "ES", "", "Grenada");
-INSERT INTO User VALUES (125, "Keenen", "Roark", 39, "keeroark@yahoo.com", "EN", "", "Uganda");
-INSERT INTO User VALUES (126, "Zelda", "Booth", 17, "zelbooth@aol.com", "ES", "", "United States");
-INSERT INTO User VALUES (127, "Allisson", "Doty", 76, "alldoty@gmail.com", "EN", "", "Lithuania");
-INSERT INTO User VALUES (128, "Orville", "Bateman", 84, "orvbateman@gmail.com", "ES", "", "Singapore");
-INSERT INTO User VALUES (129, "Julissa", "Salinas", 32, "julsalinas@mail.ru", "ES", "", "Anguilla");
-INSERT INTO User VALUES (130, "Elsa", "Michel", 37, "elsmichel@yahoo.com", "ES", "", "Greenland");
-INSERT INTO User VALUES (131, "Lori", "Doran", 18, "lordoran@aol.com", "EN", "", "Jan Mayen");
-INSERT INTO User VALUES (132, "Schley", "Sandoval", 18, "schsandoval@sbcglobal.net", "ES", "", "Costa Rica");
-INSERT INTO User VALUES (133, "Murl", "Ponce", 48, "murponce@facebook.com", "ES", "", "Holy See (Vatican City)");
-INSERT INTO User VALUES (134, "Bynum", "Major", 35, "bynmajor@facebook.com", "EN", "", "Thailand");
-INSERT INTO User VALUES (135, "Rube", "Cannon", 67, "rubcannon@hotmail.com", "EN", "", "Afghanistan");
-INSERT INTO User VALUES (136, "Garth", "Dillard", 45, "gardillard@yahoo.com", "EN", "", "Botswana");
-INSERT INTO User VALUES (137, "Bryan", "Dillon", 21, "brydillon@aol.com", "ES", "", "Saint Martin");
-INSERT INTO User VALUES (138, "Boone", "Farrell", 72, "boofarrell@facebook.com", "ES", "", "Dhekelia");
-INSERT INTO User VALUES (139, "Ingrid", "Coles", 19, "ingcoles@mail.ru", "ES", "", "Mexico");
-INSERT INTO User VALUES (140, "Joline", "Upton", 74, "jolupton@hotmail.com", "ES", "", "Kosovo");
-INSERT INTO User VALUES (141, "Brogan", "Masters", 46, "bromasters@mail.ru", "ES", "", "Maldives");
-INSERT INTO User VALUES (142, "Armando", "Easley", 85, "armeasley@mail.ru", "EN", "", "Curacao");
-INSERT INTO User VALUES (143, "Nigel", "Carlton", 23, "nigcarlton@hotmail.com", "EN", "", "Greece");
-INSERT INTO User VALUES (144, "Ardith", "Fry", 85, "ardfry@aol.com", "ES", "", "Akrotiri");
-INSERT INTO User VALUES (145, "Lucero", "Parks", 87, "lucparks@sbcglobal.net", "ES", "", "Lesotho");
-INSERT INTO User VALUES (146, "Milford", "Ricks", 58, "milricks@mail.ru", "ES", "", "American Samoa");
-INSERT INTO User VALUES (147, "Lollie", "Hightower", 57, "lolhightower@yahoo.com", "EN", "", "Cote d'Ivoire");
-INSERT INTO User VALUES (148, "Marguerite", "Hinojosa", 71, "marhinojosa@gmail.com", "EN", "", "Cayman Islands");
-INSERT INTO User VALUES (149, "Tara", "Valdez", 51, "tarvaldez@aol.com", "EN", "", "Cayman Islands");
-INSERT INTO User VALUES (150, "Fleeta", "Cordova", 16, "flecordova@facebook.com", "EN", "", "El Salvador");
-INSERT INTO User VALUES (151, "Kian", "Leach", 79, "kialeach@aol.com", "EN", "", "Montenegro");
-INSERT INTO User VALUES (152, "Joanna", "Creech", 18, "joacreech@hotmail.com", "ES", "", "Liberia");
-INSERT INTO User VALUES (153, "Rubye", "Gill", 33, "rubgill@yahoo.com", "EN", "", "Vietnam");
-INSERT INTO User VALUES (154, "Jalisa", "Paul", 91, "jalpaul@aol.com", "ES", "", "Nauru");
-INSERT INTO User VALUES (155, "Salome", "Mercer", 39, "salmercer@yahoo.com", "ES", "", "Suriname");
-INSERT INTO User VALUES (156, "Budd", "Lockwood", 14, "budlockwood@gmail.com", "ES", "", "Qatar");
-INSERT INTO User VALUES (157, "Kathleen", "Pearson", 17, "katpearson@facebook.com", "EN", "", "Saint Martin");
-INSERT INTO User VALUES (158, "Jessi", "Youngblood", 45, "jesyoungblood@hotmail.com", "EN", "", "Zimbabwe");
-INSERT INTO User VALUES (159, "Moises", "Lyles", 78, "moilyles@aol.com", "ES", "", "Antarctica");
-INSERT INTO User VALUES (160, "Maribeth", "Wang", 42, "marwang@facebook.com", "ES", "", "United States");
-INSERT INTO User VALUES (161, "Maybell", "Hancock", 83, "mayhancock@yahoo.com", "ES", "", "Tajikistan");
-INSERT INTO User VALUES (162, "Ignatius", "Gale", 41, "igngale@hotmail.com", "ES", "", "Sudan");
-INSERT INTO User VALUES (163, "Daisy", "Pool", 68, "daipool@aol.com", "EN", "", "Thailand");
-INSERT INTO User VALUES (164, "Rodger", "Santiago", 60, "rodsantiago@aol.com", "ES", "", "Akrotiri");
-INSERT INTO User VALUES (165, "Wilton", "Roman", 48, "wilroman@aol.com", "EN", "", "Barbados");
-INSERT INTO User VALUES (166, "Blanchie", "Hooker", 19, "blahooker@mail.ru", "EN", "", "Malaysia");
-INSERT INTO User VALUES (167, "Vicy", "Kimbrough", 55, "vickimbrough@aol.com", "EN", "", "Poland");
-INSERT INTO User VALUES (168, "Bethann", "Irvin", 56, "betirvin@aol.com", "ES", "", "Fiji");
-INSERT INTO User VALUES (169, "Jeremie", "Fugate", 22, "jerfugate@gmail.com", "EN", "", "Argentina");
-INSERT INTO User VALUES (170, "Tolbert", "Milligan", 61, "tolmilligan@yahoo.com", "EN", "", "Estonia");
-INSERT INTO User VALUES (171, "Ardyce", "Cummins", 63, "ardcummins@yahoo.com", "ES", "", "Peru");
-INSERT INTO User VALUES (172, "Caitlyn", "Zavala", 71, "caizavala@yahoo.com", "EN", "", "Fiji");
-INSERT INTO User VALUES (173, "Terri", "Ramirez", 58, "terramirez@yahoo.com", "ES", "", "Eritrea");
-INSERT INTO User VALUES (174, "Randell", "Estes", 33, "ranestes@yahoo.com", "EN", "", "Western Sahara");
-INSERT INTO User VALUES (175, "Anton", "Wang", 90, "antwang@yahoo.com", "ES", "", "United States");
-INSERT INTO User VALUES (176, "Jenny", "Mason", 84, "jenmason@sbcglobal.net", "EN", "", "Belize");
-INSERT INTO User VALUES (177, "Albina", "Hinojosa", 86, "albhinojosa@sbcglobal.net", "ES", "", "Mongolia");
-INSERT INTO User VALUES (178, "Gladyce", "Ragsdale", 30, "glaragsdale@aol.com", "EN", "", "Monaco");
-INSERT INTO User VALUES (179, "Iesha", "Higginbotham", 60, "ieshigginbotham@facebook.com", "EN", "", "Botswana");
-INSERT INTO User VALUES (180, "Randal", "Blackmon", 23, "ranblackmon@hotmail.com", "EN", "", "Korea, North");
-INSERT INTO User VALUES (181, "Maggie", "Tatum", 40, "magtatum@yahoo.com", "ES", "", "Indonesia");
-INSERT INTO User VALUES (182, "Tyra", "Anderson", 53, "tyranderson@gmail.com", "ES", "", "Marshall Islands");
-INSERT INTO User VALUES (183, "Assunta", "Akins", 28, "assakins@aol.com", "EN", "", "Nepal");
-INSERT INTO User VALUES (184, "Cornel", "Ramsey", 92, "corramsey@facebook.com", "ES", "", "Liechtenstein");
-INSERT INTO User VALUES (185, "Carsen", "Tanner", 39, "cartanner@yahoo.com", "EN", "", "Mauritius");
-INSERT INTO User VALUES (186, "Corda", "Willey", 65, "corwilley@hotmail.com", "EN", "", "Austria");
-INSERT INTO User VALUES (187, "Winton", "Holt", 67, "winholt@facebook.com", "ES", "", "Philippines");
-INSERT INTO User VALUES (188, "Authur", "Otto", 21, "autotto@sbcglobal.net", "EN", "", "Haiti");
-INSERT INTO User VALUES (189, "Deanna", "Kraft", 19, "deakraft@sbcglobal.net", "EN", "", "Panama");
-INSERT INTO User VALUES (190, "Fidelia", "Weiss", 26, "fidweiss@yahoo.com", "EN", "", "Moldova");
-INSERT INTO User VALUES (191, "Michell", "Schroeder", 78, "micschroeder@yahoo.com", "ES", "", "Madagascar");
-INSERT INTO User VALUES (192, "Kyson", "Busch", 38, "kysbusch@aol.com", "EN", "", "West Bank");
-INSERT INTO User VALUES (193, "Filomena", "Dowdy", 73, "fildowdy@aol.com", "ES", "", "Solomon Islands");
-INSERT INTO User VALUES (194, "Sibyl", "Sumner", 52, "sibsumner@yahoo.com", "ES", "", "Burundi");
-INSERT INTO User VALUES (195, "Lupe", "Bowser", 41, "lupbowser@aol.com", "ES", "", "Russia");
-INSERT INTO User VALUES (196, "Marissa", "Moss", 52, "marmoss@mail.ru", "EN", "", "Algeria");
-INSERT INTO User VALUES (197, "Dorla", "Cotton", 53, "dorcotton@yahoo.com", "EN", "", "British Indian Ocean Territory");
-INSERT INTO User VALUES (198, "Sada", "Gill", 19, "sadgill@aol.com", "ES", "", "Oman");
-INSERT INTO User VALUES (199, "Aurora", "Stark", 92, "aurstark@hotmail.com", "EN", "", "Mexico");
-INSERT INTO User VALUES (200, "Randall", "Gates", 33, "rangates@yahoo.com", "EN", "", "Uruguay");
-INSERT INTO User VALUES (201, "Kyson", "Hull", 60, "kyshull@yahoo.com", "EN", "", "Austria");
-INSERT INTO User VALUES (202, "Wilfred", "Crews", 75, "wilcrews@gmail.com", "EN", "", "Palau");
-INSERT INTO User VALUES (203, "Kenji", "Knox", 49, "kenknox@gmail.com", "ES", "", "Serbia");
-INSERT INTO User VALUES (204, "Stevie", "Traylor", 63, "stetraylor@aol.com", "ES", "", "Equatorial Guinea");
-INSERT INTO User VALUES (205, "Russ", "Mock", 83, "rusmock@sbcglobal.net", "EN", "", "Swaziland");
-INSERT INTO User VALUES (206, "Jerrilyn", "Ruffin", 53, "jerruffin@hotmail.com", "EN", "", "Johnston Atoll");
-INSERT INTO User VALUES (207, "Romeo", "Murphy", 33, "rommurphy@aol.com", "EN", "", "Sri Lanka");
-INSERT INTO User VALUES (208, "Magdalene", "Michaels", 91, "magmichaels@gmail.com", "EN", "", "Cook Islands");
-INSERT INTO User VALUES (209, "Captain", "Carrier", 66, "capcarrier@aol.com", "EN", "", "Mali");
-INSERT INTO User VALUES (210, "Lasonya", "Osborn", 32, "lasosborn@sbcglobal.net", "EN", "", "Taiwan");
-INSERT INTO User VALUES (211, "Sean", "Reilly", 86, "seareilly@mail.ru", "ES", "", "Afghanistan");
-INSERT INTO User VALUES (212, "Jacques", "Medrano", 16, "jacmedrano@sbcglobal.net", "EN", "", "Iraq");
-INSERT INTO User VALUES (213, "Ayden", "Elliot", 61, "aydelliot@mail.ru", "ES", "", "Uganda");
-INSERT INTO User VALUES (214, "Alycia", "Lyles", 49, "alylyles@gmail.com", "EN", "", "Yemen");
-INSERT INTO User VALUES (215, "Freida", "Crook", 89, "frecrook@gmail.com", "EN", "", "Saint Martin");
-INSERT INTO User VALUES (216, "Abram", "Mott", 73, "abrmott@sbcglobal.net", "EN", "", "Micronesia, Federated States of");
-INSERT INTO User VALUES (217, "Autumn", "Orozco", 92, "autorozco@aol.com", "EN", "", "Saint Pierre and Miquelon");
-INSERT INTO User VALUES (218, "Jarett", "Portillo", 70, "jarportillo@aol.com", "EN", "", "Switzerland");
-INSERT INTO User VALUES (219, "Napoleon", "Bruner", 64, "napbruner@aol.com", "EN", "", "Botswana");
-INSERT INTO User VALUES (220, "Raphael", "Nickerson", 30, "rapnickerson@yahoo.com", "ES", "", "Tonga");
-INSERT INTO User VALUES (221, "Catrina", "Lehman", 15, "catlehman@mail.ru", "EN", "", "Peru");
-INSERT INTO User VALUES (222, "Shavon", "Fisher", 18, "shafisher@yahoo.com", "ES", "", "Fiji");
-INSERT INTO User VALUES (223, "Lelah", "Thomas", 55, "lelthomas@hotmail.com", "EN", "", "Antigua and Barbuda");
-INSERT INTO User VALUES (224, "Suzie", "Mckenzie", 22, "suzmckenzie@facebook.com", "EN", "", "Qatar");
-INSERT INTO User VALUES (225, "Dedric", "Hand", 47, "dedhand@aol.com", "EN", "", "Italy");
-INSERT INTO User VALUES (226, "Novella", "Broussard", 39, "novbroussard@facebook.com", "EN", "", "Ghana");
-INSERT INTO User VALUES (227, "Dicy", "Eckert", 24, "diceckert@mail.ru", "ES", "", "Angola");
-INSERT INTO User VALUES (228, "Mekhi", "Dodson", 22, "mekdodson@yahoo.com", "EN", "", "Benin");
-INSERT INTO User VALUES (229, "Landen", "Storey", 76, "lanstorey@yahoo.com", "ES", "", "Romania");
-INSERT INTO User VALUES (230, "Alvira", "Patten", 57, "alvpatten@yahoo.com", "EN", "", "Sri Lanka");
-INSERT INTO User VALUES (231, "Sharita", "Buckner", 40, "shabuckner@facebook.com", "EN", "", "Mozambique");
-INSERT INTO User VALUES (232, "Kira", "Carson", 51, "kircarson@facebook.com", "ES", "", "Niger");
-INSERT INTO User VALUES (233, "Wes", "Hall", 56, "weshall@gmail.com", "ES", "", "Anguilla");
-INSERT INTO User VALUES (234, "Eldridge", "Gardner", 17, "eldgardner@hotmail.com", "ES", "", "Latvia");
-INSERT INTO User VALUES (235, "Lucy", "Gunter", 40, "lucgunter@facebook.com", "EN", "", "Comoros");
-INSERT INTO User VALUES (236, "Lindbergh", "Villanueva", 66, "linvillanueva@sbcglobal.net", "ES", "", "India");
-INSERT INTO User VALUES (237, "Terrell", "Iverson", 29, "teriverson@gmail.com", "ES", "", "Estonia");
-INSERT INTO User VALUES (238, "Belton", "Hurst", 20, "belhurst@hotmail.com", "ES", "", "Algeria");
-INSERT INTO User VALUES (239, "Bruce", "Dodd", 40, "brudodd@sbcglobal.net", "ES", "", "Korea, North");
-INSERT INTO User VALUES (240, "Willis", "Kent", 60, "wilkent@facebook.com", "EN", "", "Ethiopia");
-INSERT INTO User VALUES (241, "Melony", "Romo", 50, "melromo@facebook.com", "ES", "", "Heard Island and McDonald Islands");
-INSERT INTO User VALUES (242, "Lucile", "Daly", 80, "lucdaly@yahoo.com", "ES", "", "Cocos (Keeling) Islands");
-INSERT INTO User VALUES (243, "Alda", "Stern", 22, "aldstern@hotmail.com", "ES", "", "Mauritania");
-INSERT INTO User VALUES (244, "Elmore", "Russ", 20, "elmruss@aol.com", "ES", "", "Curacao");
-INSERT INTO User VALUES (245, "Che", "Morrison", 35, "chemorrison@gmail.com", "EN", "", "Eritrea");
-INSERT INTO User VALUES (246, "Rory", "Cote", 36, "rorcote@sbcglobal.net", "ES", "", "Luxembourg");
-INSERT INTO User VALUES (247, "Mariah", "Levine", 38, "marlevine@aol.com", "EN", "", "Kazakhstan");
-INSERT INTO User VALUES (248, "Hampton", "Hickey", 47, "hamhickey@aol.com", "EN", "", "Niue");
-INSERT INTO User VALUES (249, "Shawnte", "Kline", 88, "shakline@facebook.com", "ES", "", "Pakistan");
+INSERT INTO Users VALUES (0, "Sharyl", "Brantley", 27, "shabrantley@hotmail.com", "EN", "", "Mauritius");
+INSERT INTO Users VALUES (1, "Efren", "Maxwell", 16, "efrmaxwell@hotmail.com", "ES", "", "Madagascar");
+INSERT INTO Users VALUES (2, "Kaydence", "Brennan", 23, "kaybrennan@sbcglobal.net", "ES", "", "Honduras");
+INSERT INTO Users VALUES (3, "Moses", "Christensen", 84, "moschristensen@facebook.com", "ES", "", "Germany");
+INSERT INTO Users VALUES (4, "Alvera", "Holliday", 35, "alvholliday@yahoo.com", "EN", "", "Heard Island and McDonald Islands");
+INSERT INTO Users VALUES (5, "Moriah", "Sheets", 22, "morsheets@hotmail.com", "ES", "", "Faroe Islands");
+INSERT INTO Users VALUES (6, "Kamryn", "Craig", 60, "kamcraig@aol.com", "EN", "", "Burundi");
+INSERT INTO Users VALUES (7, "Baby", "Morris", 15, "babmorris@aol.com", "EN", "", "Bhutan");
+INSERT INTO Users VALUES (8, "Leann", "Willey", 67, "leawilley@hotmail.com", "EN", "", "Algeria");
+INSERT INTO Users VALUES (9, "Kimberlie", "Edmonds", 33, "kimedmonds@aol.com", "ES", "", "Canada");
+INSERT INTO Users VALUES (10, "Crockett", "Sylvester", 55, "crosylvester@yahoo.com", "EN", "", "Bouvet Island");
+INSERT INTO Users VALUES (11, "Gloria", "Redding", 72, "gloredding@gmail.com", "EN", "", "Ethiopia");
+INSERT INTO Users VALUES (12, "Willie", "Costello", 62, "wilcostello@yahoo.com", "EN", "", "Comoros");
+INSERT INTO Users VALUES (13, "Ellie", "Yazzie", 27, "ellyazzie@facebook.com", "ES", "", "Faroe Islands");
+INSERT INTO Users VALUES (14, "Sherwin", "Chaney", 36, "shechaney@yahoo.com", "ES", "", "Syria");
+INSERT INTO Users VALUES (15, "Goldie", "Murdock", 79, "golmurdock@yahoo.com", "ES", "", "French Polynesia");
+INSERT INTO Users VALUES (16, "Albin", "Mansfield", 91, "albmansfield@sbcglobal.net", "ES", "", "Liechtenstein");
+INSERT INTO Users VALUES (17, "Dina", "Carmona", 73, "dincarmona@mail.ru", "ES", "", "Palmyra Atoll");
+INSERT INTO Users VALUES (18, "Matthias", "Mercer", 81, "matmercer@mail.ru", "ES", "", "Senegal");
+INSERT INTO Users VALUES (19, "Alda", "Terrell", 27, "aldterrell@aol.com", "ES", "", "Micronesia, Federated States of");
+INSERT INTO Users VALUES (20, "Edw", "Huntley", 30, "edwhuntley@sbcglobal.net", "EN", "", "Niue");
+INSERT INTO Users VALUES (21, "Tucker", "Meade", 25, "tucmeade@hotmail.com", "EN", "", "Andorra");
+INSERT INTO Users VALUES (22, "Vergie", "Toth", 28, "vertoth@sbcglobal.net", "EN", "", "Estonia");
+INSERT INTO Users VALUES (23, "Yaritza", "Greer", 43, "yargreer@mail.ru", "ES", "", "Luxembourg");
+INSERT INTO Users VALUES (24, "Isidro", "Curtis", 73, "isicurtis@aol.com", "ES", "", "Morocco");
+INSERT INTO Users VALUES (25, "Aditya", "Livingston", 17, "adilivingston@facebook.com", "EN", "", "Brunei");
+INSERT INTO Users VALUES (26, "Anais", "Felix", 25, "anafelix@facebook.com", "EN", "", "Iceland");
+INSERT INTO Users VALUES (27, "Reuben", "Lemon", 67, "reulemon@sbcglobal.net", "EN", "", "Luxembourg");
+INSERT INTO Users VALUES (28, "Johnie", "Schafer", 39, "johschafer@facebook.com", "EN", "", "British Virgin Islands");
+INSERT INTO Users VALUES (29, "Rutha", "Esposito", 45, "rutesposito@gmail.com", "EN", "", "Benin");
+INSERT INTO Users VALUES (30, "Webb", "Sample", 24, "websample@mail.ru", "ES", "", "Latvia");
+INSERT INTO Users VALUES (31, "Rubye", "Craven", 54, "rubcraven@gmail.com", "EN", "", "Gibraltar");
+INSERT INTO Users VALUES (32, "Merilyn", "Edmondson", 36, "meredmondson@hotmail.com", "ES", "", "Howland Island");
+INSERT INTO Users VALUES (33, "Nathaly", "Stacy", 52, "natstacy@gmail.com", "EN", "", "Tonga");
+INSERT INTO Users VALUES (34, "Latifah", "Marshall", 24, "latmarshall@hotmail.com", "ES", "", "West Bank");
+INSERT INTO Users VALUES (35, "Chalmer", "Finley", 73, "chafinley@sbcglobal.net", "ES", "", "Oman");
+INSERT INTO Users VALUES (36, "Jaidyn", "Wolfe", 75, "jaiwolfe@aol.com", "ES", "", "Slovenia");
+INSERT INTO Users VALUES (37, "Kalyn", "Platt", 20, "kalplatt@gmail.com", "ES", "", "Croatia");
+INSERT INTO Users VALUES (38, "Rillie", "Donovan", 68, "rildonovan@hotmail.com", "ES", "", "Brunei");
+INSERT INTO Users VALUES (39, "Lakeisha", "Frost", 46, "lakfrost@aol.com", "EN", "", "Austria");
+INSERT INTO Users VALUES (40, "Jaquez", "Meza", 64, "jaqmeza@sbcglobal.net", "ES", "", "Hungary");
+INSERT INTO Users VALUES (41, "Carmella", "Hartman", 30, "carhartman@hotmail.com", "ES", "", "Suriname");
+INSERT INTO Users VALUES (42, "Henderson", "Paris", 32, "henparis@hotmail.com", "ES", "", "Serbia");
+INSERT INTO Users VALUES (43, "Mozella", "Inman", 71, "mozinman@hotmail.com", "ES", "", "Andorra");
+INSERT INTO Users VALUES (44, "Alivia", "Grayson", 18, "aligrayson@sbcglobal.net", "EN", "", "Burundi");
+INSERT INTO Users VALUES (45, "Dossie", "Hodge", 63, "doshodge@sbcglobal.net", "EN", "", "Mauritania");
+INSERT INTO Users VALUES (46, "Alvina", "Dutton", 57, "alvdutton@mail.ru", "ES", "", "Botswana");
+INSERT INTO Users VALUES (47, "Jaquan", "Mock", 41, "jaqmock@gmail.com", "EN", "", "Ethiopia");
+INSERT INTO Users VALUES (48, "Burton", "Gillis", 63, "burgillis@yahoo.com", "ES", "", "Hungary");
+INSERT INTO Users VALUES (49, "Carleton", "Madrid", 14, "carmadrid@mail.ru", "ES", "", "Syria");
+INSERT INTO Users VALUES (50, "Millie", "Lara", 43, "millara@aol.com", "EN", "", "Saint Martin");
+INSERT INTO Users VALUES (51, "Woodroe", "Stafford", 46, "woostafford@mail.ru", "ES", "", "Northern Mariana Islands");
+INSERT INTO Users VALUES (52, "Vere", "Redmond", 24, "verredmond@sbcglobal.net", "ES", "", "Algeria");
+INSERT INTO Users VALUES (53, "Denzil", "Dowling", 73, "dendowling@aol.com", "ES", "", "Ireland");
+INSERT INTO Users VALUES (54, "Addison", "Walden", 55, "addwalden@aol.com", "EN", "", "Iceland");
+INSERT INTO Users VALUES (55, "Sada", "Nicholson", 82, "sadnicholson@sbcglobal.net", "EN", "", "Marshall Islands");
+INSERT INTO Users VALUES (56, "Lavar", "Caudill", 35, "lavcaudill@gmail.com", "EN", "", "Turkey");
+INSERT INTO Users VALUES (57, "Jayvon", "Pugh", 47, "jaypugh@hotmail.com", "ES", "", "Latvia");
+INSERT INTO Users VALUES (58, "Kourtney", "Denton", 90, "koudenton@mail.ru", "ES", "", "Cote d'Ivoire");
+INSERT INTO Users VALUES (59, "Janell", "Madrid", 74, "janmadrid@facebook.com", "ES", "", "Jersey");
+INSERT INTO Users VALUES (60, "Humphrey", "Hoskins", 39, "humhoskins@aol.com", "EN", "", "Gambia, The");
+INSERT INTO Users VALUES (61, "Nyah", "Hollis", 62, "nyahollis@hotmail.com", "EN", "", "Northern Mariana Islands");
+INSERT INTO Users VALUES (62, "Kirt", "Crook", 59, "kircrook@aol.com", "EN", "", "Slovenia");
+INSERT INTO Users VALUES (63, "Laurence", "Rangel", 14, "laurangel@facebook.com", "ES", "", "Saint Kitts and Nevis");
+INSERT INTO Users VALUES (64, "Ingrid", "Calvert", 18, "ingcalvert@mail.ru", "ES", "", "Saint Martin");
+INSERT INTO Users VALUES (65, "Jasmin", "Funk", 67, "jasfunk@mail.ru", "ES", "", "Congo, Republic of the");
+INSERT INTO Users VALUES (66, "Harrold", "Couture", 77, "harcouture@mail.ru", "ES", "", "Portugal");
+INSERT INTO Users VALUES (67, "Jazmyne", "Krause", 46, "jazkrause@hotmail.com", "ES", "", "Tajikistan");
+INSERT INTO Users VALUES (68, "Zita", "Harms", 82, "zitharms@facebook.com", "ES", "", "Laos");
+INSERT INTO Users VALUES (69, "Cherelle", "Magee", 49, "chemagee@facebook.com", "ES", "", "Micronesia, Federated States of");
+INSERT INTO Users VALUES (70, "Sidney", "Nava", 36, "sidnava@hotmail.com", "ES", "", "Maldives");
+INSERT INTO Users VALUES (71, "Darold", "Beard", 13, "darbeard@mail.ru", "ES", "", "Kingman Reef");
+INSERT INTO Users VALUES (72, "Hassan", "Duffy", 61, "hasduffy@hotmail.com", "EN", "", "Falkland Islands (Islas Malvinas)");
+INSERT INTO Users VALUES (73, "Chynna", "Looney", 18, "chylooney@gmail.com", "ES", "", "Kuwait");
+INSERT INTO Users VALUES (74, "Charlie", "Hinds", 21, "chahinds@aol.com", "ES", "", "Equatorial Guinea");
+INSERT INTO Users VALUES (75, "Elia", "Prince", 38, "eliprince@facebook.com", "EN", "", "Aruba");
+INSERT INTO Users VALUES (76, "Bernardo", "Winkler", 65, "berwinkler@sbcglobal.net", "EN", "", "Faroe Islands");
+INSERT INTO Users VALUES (77, "Deena", "Billings", 47, "deebillings@yahoo.com", "ES", "", "Iraq");
+INSERT INTO Users VALUES (78, "Tatyana", "Mccormack", 45, "tatmccormack@gmail.com", "ES", "", "Central African Republic");
+INSERT INTO Users VALUES (79, "Annetta", "Torrez", 71, "anntorrez@mail.ru", "ES", "", "Italy");
+INSERT INTO Users VALUES (80, "Allean", "Choi", 38, "allchoi@mail.ru", "ES", "", "Paraguay");
+INSERT INTO Users VALUES (81, "Hobson", "Hinojosa", 13, "hobhinojosa@sbcglobal.net", "EN", "", "Slovenia");
+INSERT INTO Users VALUES (82, "Severt", "Crow", 43, "sevcrow@mail.ru", "ES", "", "Norfolk Island");
+INSERT INTO Users VALUES (83, "Bryana", "Reid", 27, "bryreid@gmail.com", "EN", "", "Bahamas, The");
+INSERT INTO Users VALUES (84, "Trevon", "Melendez", 54, "tremelendez@gmail.com", "EN", "", "Japan");
+INSERT INTO Users VALUES (85, "Nevada", "Lorenz", 86, "nevlorenz@sbcglobal.net", "ES", "", "El Salvador");
+INSERT INTO Users VALUES (86, "Trey", "Bland", 87, "trebland@gmail.com", "ES", "", "Zimbabwe");
+INSERT INTO Users VALUES (87, "Normand", "Bartholomew", 85, "norbartholomew@aol.com", "EN", "", "Pitcairn Islands");
+INSERT INTO Users VALUES (88, "Henretta", "Melvin", 38, "henmelvin@facebook.com", "EN", "", "United Arab Emirates");
+INSERT INTO Users VALUES (89, "Cressie", "Ivy", 55, "creivy@mail.ru", "ES", "", "Greece");
+INSERT INTO Users VALUES (90, "Triston", "Hewitt", 57, "trihewitt@sbcglobal.net", "EN", "", "Canada");
+INSERT INTO Users VALUES (91, "Emmons", "Huston", 13, "emmhuston@aol.com", "EN", "", "El Salvador");
+INSERT INTO Users VALUES (92, "Wood", "Cannon", 75, "woocannon@mail.ru", "EN", "", "Saint Lucia");
+INSERT INTO Users VALUES (93, "Kade", "Pena", 15, "kadpena@sbcglobal.net", "ES", "", "San Marino");
+INSERT INTO Users VALUES (94, "Nunzio", "Flint", 24, "nunflint@yahoo.com", "ES", "", "Argentina");
+INSERT INTO Users VALUES (95, "Athena", "Bergeron", 91, "athbergeron@yahoo.com", "EN", "", "Sudan");
+INSERT INTO Users VALUES (96, "Junior", "Hinojosa", 40, "junhinojosa@sbcglobal.net", "ES", "", "Saint Barthelemy");
+INSERT INTO Users VALUES (97, "Cleve", "Mabry", 63, "clemabry@aol.com", "ES", "", "India");
+INSERT INTO Users VALUES (98, "Cordella", "Thorne", 82, "corthorne@sbcglobal.net", "EN", "", "Estonia");
+INSERT INTO Users VALUES (99, "Holland", "Blake", 48, "holblake@hotmail.com", "EN", "", "West Bank");
+INSERT INTO Users VALUES (100, "Salina", "Sterling", 43, "salsterling@hotmail.com", "EN", "", "Virgin Islands");
+INSERT INTO Users VALUES (101, "Dale", "Butcher", 57, "dalbutcher@yahoo.com", "ES", "", "Azerbaijan");
+INSERT INTO Users VALUES (102, "Tandy", "Abernathy", 31, "tanabernathy@mail.ru", "EN", "", "Liberia");
+INSERT INTO Users VALUES (103, "Dejon", "Schneider", 71, "dejschneider@yahoo.com", "ES", "", "Austria");
+INSERT INTO Users VALUES (104, "Estell", "Upton", 13, "estupton@gmail.com", "ES", "", "Gibraltar");
+INSERT INTO Users VALUES (105, "Jaden", "Mcmullen", 74, "jadmcmullen@aol.com", "EN", "", "United Kingdom");
+INSERT INTO Users VALUES (106, "Genesis", "Lockwood", 16, "genlockwood@aol.com", "ES", "", "American Samoa");
+INSERT INTO Users VALUES (107, "Kyle", "Russ", 33, "kylruss@mail.ru", "EN", "", "Azerbaijan");
+INSERT INTO Users VALUES (108, "Norman", "Machado", 19, "normachado@yahoo.com", "ES", "", "Belarus");
+INSERT INTO Users VALUES (109, "Ashtyn", "Lam", 23, "ashlam@gmail.com", "ES", "", "Micronesia, Federated States of");
+INSERT INTO Users VALUES (110, "Malissa", "Worley", 84, "malworley@aol.com", "ES", "", "New Caledonia");
+INSERT INTO Users VALUES (111, "Belinda", "Bliss", 57, "belbliss@yahoo.com", "ES", "", "Chad");
+INSERT INTO Users VALUES (112, "Markel", "Sloan", 90, "marsloan@aol.com", "EN", "", "Cayman Islands");
+INSERT INTO Users VALUES (113, "Desiree", "Flint", 52, "desflint@hotmail.com", "ES", "", "Iran");
+INSERT INTO Users VALUES (114, "Berdie", "Lang", 31, "berlang@yahoo.com", "EN", "", "Argentina");
+INSERT INTO Users VALUES (115, "Lauretta", "Holloway", 57, "lauholloway@mail.ru", "EN", "", "Austria");
+INSERT INTO Users VALUES (116, "Fredy", "Bradford", 54, "frebradford@aol.com", "EN", "", "Jordan");
+INSERT INTO Users VALUES (117, "Jaliyah", "Akers", 85, "jalakers@facebook.com", "ES", "", "Chad");
+INSERT INTO Users VALUES (118, "Travis", "Swartz", 49, "traswartz@gmail.com", "ES", "", "Brazil");
+INSERT INTO Users VALUES (119, "Arbie", "Begay", 49, "arbbegay@mail.ru", "EN", "", "Palmyra Atoll");
+INSERT INTO Users VALUES (120, "Roland", "Abraham", 51, "rolabraham@facebook.com", "ES", "", "Egypt");
+INSERT INTO Users VALUES (121, "Dellia", "Odell", 18, "delodell@hotmail.com", "ES", "", "Zimbabwe");
+INSERT INTO Users VALUES (122, "Susanne", "Bourgeois", 29, "susbourgeois@hotmail.com", "ES", "", "Ireland");
+INSERT INTO Users VALUES (123, "Janel", "Moody", 31, "janmoody@facebook.com", "ES", "", "British Indian Ocean Territory");
+INSERT INTO Users VALUES (124, "Elaina", "Rubio", 25, "elarubio@aol.com", "ES", "", "Grenada");
+INSERT INTO Users VALUES (125, "Keenen", "Roark", 39, "keeroark@yahoo.com", "EN", "", "Uganda");
+INSERT INTO Users VALUES (126, "Zelda", "Booth", 17, "zelbooth@aol.com", "ES", "", "United States");
+INSERT INTO Users VALUES (127, "Allisson", "Doty", 76, "alldoty@gmail.com", "EN", "", "Lithuania");
+INSERT INTO Users VALUES (128, "Orville", "Bateman", 84, "orvbateman@gmail.com", "ES", "", "Singapore");
+INSERT INTO Users VALUES (129, "Julissa", "Salinas", 32, "julsalinas@mail.ru", "ES", "", "Anguilla");
+INSERT INTO Users VALUES (130, "Elsa", "Michel", 37, "elsmichel@yahoo.com", "ES", "", "Greenland");
+INSERT INTO Users VALUES (131, "Lori", "Doran", 18, "lordoran@aol.com", "EN", "", "Jan Mayen");
+INSERT INTO Users VALUES (132, "Schley", "Sandoval", 18, "schsandoval@sbcglobal.net", "ES", "", "Costa Rica");
+INSERT INTO Users VALUES (133, "Murl", "Ponce", 48, "murponce@facebook.com", "ES", "", "Holy See (Vatican City)");
+INSERT INTO Users VALUES (134, "Bynum", "Major", 35, "bynmajor@facebook.com", "EN", "", "Thailand");
+INSERT INTO Users VALUES (135, "Rube", "Cannon", 67, "rubcannon@hotmail.com", "EN", "", "Afghanistan");
+INSERT INTO Users VALUES (136, "Garth", "Dillard", 45, "gardillard@yahoo.com", "EN", "", "Botswana");
+INSERT INTO Users VALUES (137, "Bryan", "Dillon", 21, "brydillon@aol.com", "ES", "", "Saint Martin");
+INSERT INTO Users VALUES (138, "Boone", "Farrell", 72, "boofarrell@facebook.com", "ES", "", "Dhekelia");
+INSERT INTO Users VALUES (139, "Ingrid", "Coles", 19, "ingcoles@mail.ru", "ES", "", "Mexico");
+INSERT INTO Users VALUES (140, "Joline", "Upton", 74, "jolupton@hotmail.com", "ES", "", "Kosovo");
+INSERT INTO Users VALUES (141, "Brogan", "Masters", 46, "bromasters@mail.ru", "ES", "", "Maldives");
+INSERT INTO Users VALUES (142, "Armando", "Easley", 85, "armeasley@mail.ru", "EN", "", "Curacao");
+INSERT INTO Users VALUES (143, "Nigel", "Carlton", 23, "nigcarlton@hotmail.com", "EN", "", "Greece");
+INSERT INTO Users VALUES (144, "Ardith", "Fry", 85, "ardfry@aol.com", "ES", "", "Akrotiri");
+INSERT INTO Users VALUES (145, "Lucero", "Parks", 87, "lucparks@sbcglobal.net", "ES", "", "Lesotho");
+INSERT INTO Users VALUES (146, "Milford", "Ricks", 58, "milricks@mail.ru", "ES", "", "American Samoa");
+INSERT INTO Users VALUES (147, "Lollie", "Hightower", 57, "lolhightower@yahoo.com", "EN", "", "Cote d'Ivoire");
+INSERT INTO Users VALUES (148, "Marguerite", "Hinojosa", 71, "marhinojosa@gmail.com", "EN", "", "Cayman Islands");
+INSERT INTO Users VALUES (149, "Tara", "Valdez", 51, "tarvaldez@aol.com", "EN", "", "Cayman Islands");
+INSERT INTO Users VALUES (150, "Fleeta", "Cordova", 16, "flecordova@facebook.com", "EN", "", "El Salvador");
+INSERT INTO Users VALUES (151, "Kian", "Leach", 79, "kialeach@aol.com", "EN", "", "Montenegro");
+INSERT INTO Users VALUES (152, "Joanna", "Creech", 18, "joacreech@hotmail.com", "ES", "", "Liberia");
+INSERT INTO Users VALUES (153, "Rubye", "Gill", 33, "rubgill@yahoo.com", "EN", "", "Vietnam");
+INSERT INTO Users VALUES (154, "Jalisa", "Paul", 91, "jalpaul@aol.com", "ES", "", "Nauru");
+INSERT INTO Users VALUES (155, "Salome", "Mercer", 39, "salmercer@yahoo.com", "ES", "", "Suriname");
+INSERT INTO Users VALUES (156, "Budd", "Lockwood", 14, "budlockwood@gmail.com", "ES", "", "Qatar");
+INSERT INTO Users VALUES (157, "Kathleen", "Pearson", 17, "katpearson@facebook.com", "EN", "", "Saint Martin");
+INSERT INTO Users VALUES (158, "Jessi", "Youngblood", 45, "jesyoungblood@hotmail.com", "EN", "", "Zimbabwe");
+INSERT INTO Users VALUES (159, "Moises", "Lyles", 78, "moilyles@aol.com", "ES", "", "Antarctica");
+INSERT INTO Users VALUES (160, "Maribeth", "Wang", 42, "marwang@facebook.com", "ES", "", "United States");
+INSERT INTO Users VALUES (161, "Maybell", "Hancock", 83, "mayhancock@yahoo.com", "ES", "", "Tajikistan");
+INSERT INTO Users VALUES (162, "Ignatius", "Gale", 41, "igngale@hotmail.com", "ES", "", "Sudan");
+INSERT INTO Users VALUES (163, "Daisy", "Pool", 68, "daipool@aol.com", "EN", "", "Thailand");
+INSERT INTO Users VALUES (164, "Rodger", "Santiago", 60, "rodsantiago@aol.com", "ES", "", "Akrotiri");
+INSERT INTO Users VALUES (165, "Wilton", "Roman", 48, "wilroman@aol.com", "EN", "", "Barbados");
+INSERT INTO Users VALUES (166, "Blanchie", "Hooker", 19, "blahooker@mail.ru", "EN", "", "Malaysia");
+INSERT INTO Users VALUES (167, "Vicy", "Kimbrough", 55, "vickimbrough@aol.com", "EN", "", "Poland");
+INSERT INTO Users VALUES (168, "Bethann", "Irvin", 56, "betirvin@aol.com", "ES", "", "Fiji");
+INSERT INTO Users VALUES (169, "Jeremie", "Fugate", 22, "jerfugate@gmail.com", "EN", "", "Argentina");
+INSERT INTO Users VALUES (170, "Tolbert", "Milligan", 61, "tolmilligan@yahoo.com", "EN", "", "Estonia");
+INSERT INTO Users VALUES (171, "Ardyce", "Cummins", 63, "ardcummins@yahoo.com", "ES", "", "Peru");
+INSERT INTO Users VALUES (172, "Caitlyn", "Zavala", 71, "caizavala@yahoo.com", "EN", "", "Fiji");
+INSERT INTO Users VALUES (173, "Terri", "Ramirez", 58, "terramirez@yahoo.com", "ES", "", "Eritrea");
+INSERT INTO Users VALUES (174, "Randell", "Estes", 33, "ranestes@yahoo.com", "EN", "", "Western Sahara");
+INSERT INTO Users VALUES (175, "Anton", "Wang", 90, "antwang@yahoo.com", "ES", "", "United States");
+INSERT INTO Users VALUES (176, "Jenny", "Mason", 84, "jenmason@sbcglobal.net", "EN", "", "Belize");
+INSERT INTO Users VALUES (177, "Albina", "Hinojosa", 86, "albhinojosa@sbcglobal.net", "ES", "", "Mongolia");
+INSERT INTO Users VALUES (178, "Gladyce", "Ragsdale", 30, "glaragsdale@aol.com", "EN", "", "Monaco");
+INSERT INTO Users VALUES (179, "Iesha", "Higginbotham", 60, "ieshigginbotham@facebook.com", "EN", "", "Botswana");
+INSERT INTO Users VALUES (180, "Randal", "Blackmon", 23, "ranblackmon@hotmail.com", "EN", "", "Korea, North");
+INSERT INTO Users VALUES (181, "Maggie", "Tatum", 40, "magtatum@yahoo.com", "ES", "", "Indonesia");
+INSERT INTO Users VALUES (182, "Tyra", "Anderson", 53, "tyranderson@gmail.com", "ES", "", "Marshall Islands");
+INSERT INTO Users VALUES (183, "Assunta", "Akins", 28, "assakins@aol.com", "EN", "", "Nepal");
+INSERT INTO Users VALUES (184, "Cornel", "Ramsey", 92, "corramsey@facebook.com", "ES", "", "Liechtenstein");
+INSERT INTO Users VALUES (185, "Carsen", "Tanner", 39, "cartanner@yahoo.com", "EN", "", "Mauritius");
+INSERT INTO Users VALUES (186, "Corda", "Willey", 65, "corwilley@hotmail.com", "EN", "", "Austria");
+INSERT INTO Users VALUES (187, "Winton", "Holt", 67, "winholt@facebook.com", "ES", "", "Philippines");
+INSERT INTO Users VALUES (188, "Authur", "Otto", 21, "autotto@sbcglobal.net", "EN", "", "Haiti");
+INSERT INTO Users VALUES (189, "Deanna", "Kraft", 19, "deakraft@sbcglobal.net", "EN", "", "Panama");
+INSERT INTO Users VALUES (190, "Fidelia", "Weiss", 26, "fidweiss@yahoo.com", "EN", "", "Moldova");
+INSERT INTO Users VALUES (191, "Michell", "Schroeder", 78, "micschroeder@yahoo.com", "ES", "", "Madagascar");
+INSERT INTO Users VALUES (192, "Kyson", "Busch", 38, "kysbusch@aol.com", "EN", "", "West Bank");
+INSERT INTO Users VALUES (193, "Filomena", "Dowdy", 73, "fildowdy@aol.com", "ES", "", "Solomon Islands");
+INSERT INTO Users VALUES (194, "Sibyl", "Sumner", 52, "sibsumner@yahoo.com", "ES", "", "Burundi");
+INSERT INTO Users VALUES (195, "Lupe", "Bowser", 41, "lupbowser@aol.com", "ES", "", "Russia");
+INSERT INTO Users VALUES (196, "Marissa", "Moss", 52, "marmoss@mail.ru", "EN", "", "Algeria");
+INSERT INTO Users VALUES (197, "Dorla", "Cotton", 53, "dorcotton@yahoo.com", "EN", "", "British Indian Ocean Territory");
+INSERT INTO Users VALUES (198, "Sada", "Gill", 19, "sadgill@aol.com", "ES", "", "Oman");
+INSERT INTO Users VALUES (199, "Aurora", "Stark", 92, "aurstark@hotmail.com", "EN", "", "Mexico");
+INSERT INTO Users VALUES (200, "Randall", "Gates", 33, "rangates@yahoo.com", "EN", "", "Uruguay");
+INSERT INTO Users VALUES (201, "Kyson", "Hull", 60, "kyshull@yahoo.com", "EN", "", "Austria");
+INSERT INTO Users VALUES (202, "Wilfred", "Crews", 75, "wilcrews@gmail.com", "EN", "", "Palau");
+INSERT INTO Users VALUES (203, "Kenji", "Knox", 49, "kenknox@gmail.com", "ES", "", "Serbia");
+INSERT INTO Users VALUES (204, "Stevie", "Traylor", 63, "stetraylor@aol.com", "ES", "", "Equatorial Guinea");
+INSERT INTO Users VALUES (205, "Russ", "Mock", 83, "rusmock@sbcglobal.net", "EN", "", "Swaziland");
+INSERT INTO Users VALUES (206, "Jerrilyn", "Ruffin", 53, "jerruffin@hotmail.com", "EN", "", "Johnston Atoll");
+INSERT INTO Users VALUES (207, "Romeo", "Murphy", 33, "rommurphy@aol.com", "EN", "", "Sri Lanka");
+INSERT INTO Users VALUES (208, "Magdalene", "Michaels", 91, "magmichaels@gmail.com", "EN", "", "Cook Islands");
+INSERT INTO Users VALUES (209, "Captain", "Carrier", 66, "capcarrier@aol.com", "EN", "", "Mali");
+INSERT INTO Users VALUES (210, "Lasonya", "Osborn", 32, "lasosborn@sbcglobal.net", "EN", "", "Taiwan");
+INSERT INTO Users VALUES (211, "Sean", "Reilly", 86, "seareilly@mail.ru", "ES", "", "Afghanistan");
+INSERT INTO Users VALUES (212, "Jacques", "Medrano", 16, "jacmedrano@sbcglobal.net", "EN", "", "Iraq");
+INSERT INTO Users VALUES (213, "Ayden", "Elliot", 61, "aydelliot@mail.ru", "ES", "", "Uganda");
+INSERT INTO Users VALUES (214, "Alycia", "Lyles", 49, "alylyles@gmail.com", "EN", "", "Yemen");
+INSERT INTO Users VALUES (215, "Freida", "Crook", 89, "frecrook@gmail.com", "EN", "", "Saint Martin");
+INSERT INTO Users VALUES (216, "Abram", "Mott", 73, "abrmott@sbcglobal.net", "EN", "", "Micronesia, Federated States of");
+INSERT INTO Users VALUES (217, "Autumn", "Orozco", 92, "autorozco@aol.com", "EN", "", "Saint Pierre and Miquelon");
+INSERT INTO Users VALUES (218, "Jarett", "Portillo", 70, "jarportillo@aol.com", "EN", "", "Switzerland");
+INSERT INTO Users VALUES (219, "Napoleon", "Bruner", 64, "napbruner@aol.com", "EN", "", "Botswana");
+INSERT INTO Users VALUES (220, "Raphael", "Nickerson", 30, "rapnickerson@yahoo.com", "ES", "", "Tonga");
+INSERT INTO Users VALUES (221, "Catrina", "Lehman", 15, "catlehman@mail.ru", "EN", "", "Peru");
+INSERT INTO Users VALUES (222, "Shavon", "Fisher", 18, "shafisher@yahoo.com", "ES", "", "Fiji");
+INSERT INTO Users VALUES (223, "Lelah", "Thomas", 55, "lelthomas@hotmail.com", "EN", "", "Antigua and Barbuda");
+INSERT INTO Users VALUES (224, "Suzie", "Mckenzie", 22, "suzmckenzie@facebook.com", "EN", "", "Qatar");
+INSERT INTO Users VALUES (225, "Dedric", "Hand", 47, "dedhand@aol.com", "EN", "", "Italy");
+INSERT INTO Users VALUES (226, "Novella", "Broussard", 39, "novbroussard@facebook.com", "EN", "", "Ghana");
+INSERT INTO Users VALUES (227, "Dicy", "Eckert", 24, "diceckert@mail.ru", "ES", "", "Angola");
+INSERT INTO Users VALUES (228, "Mekhi", "Dodson", 22, "mekdodson@yahoo.com", "EN", "", "Benin");
+INSERT INTO Users VALUES (229, "Landen", "Storey", 76, "lanstorey@yahoo.com", "ES", "", "Romania");
+INSERT INTO Users VALUES (230, "Alvira", "Patten", 57, "alvpatten@yahoo.com", "EN", "", "Sri Lanka");
+INSERT INTO Users VALUES (231, "Sharita", "Buckner", 40, "shabuckner@facebook.com", "EN", "", "Mozambique");
+INSERT INTO Users VALUES (232, "Kira", "Carson", 51, "kircarson@facebook.com", "ES", "", "Niger");
+INSERT INTO Users VALUES (233, "Wes", "Hall", 56, "weshall@gmail.com", "ES", "", "Anguilla");
+INSERT INTO Users VALUES (234, "Eldridge", "Gardner", 17, "eldgardner@hotmail.com", "ES", "", "Latvia");
+INSERT INTO Users VALUES (235, "Lucy", "Gunter", 40, "lucgunter@facebook.com", "EN", "", "Comoros");
+INSERT INTO Users VALUES (236, "Lindbergh", "Villanueva", 66, "linvillanueva@sbcglobal.net", "ES", "", "India");
+INSERT INTO Users VALUES (237, "Terrell", "Iverson", 29, "teriverson@gmail.com", "ES", "", "Estonia");
+INSERT INTO Users VALUES (238, "Belton", "Hurst", 20, "belhurst@hotmail.com", "ES", "", "Algeria");
+INSERT INTO Users VALUES (239, "Bruce", "Dodd", 40, "brudodd@sbcglobal.net", "ES", "", "Korea, North");
+INSERT INTO Users VALUES (240, "Willis", "Kent", 60, "wilkent@facebook.com", "EN", "", "Ethiopia");
+INSERT INTO Users VALUES (241, "Melony", "Romo", 50, "melromo@facebook.com", "ES", "", "Heard Island and McDonald Islands");
+INSERT INTO Users VALUES (242, "Lucile", "Daly", 80, "lucdaly@yahoo.com", "ES", "", "Cocos (Keeling) Islands");
+INSERT INTO Users VALUES (243, "Alda", "Stern", 22, "aldstern@hotmail.com", "ES", "", "Mauritania");
+INSERT INTO Users VALUES (244, "Elmore", "Russ", 20, "elmruss@aol.com", "ES", "", "Curacao");
+INSERT INTO Users VALUES (245, "Che", "Morrison", 35, "chemorrison@gmail.com", "EN", "", "Eritrea");
+INSERT INTO Users VALUES (246, "Rory", "Cote", 36, "rorcote@sbcglobal.net", "ES", "", "Luxembourg");
+INSERT INTO Users VALUES (247, "Mariah", "Levine", 38, "marlevine@aol.com", "EN", "", "Kazakhstan");
+INSERT INTO Users VALUES (248, "Hampton", "Hickey", 47, "hamhickey@aol.com", "EN", "", "Niue");
+INSERT INTO Users VALUES (249, "Shawnte", "Kline", 88, "shakline@facebook.com", "ES", "", "Pakistan");
 
 INSERT INTO connection VALUES (74, 9, '2010-12-17');
 INSERT INTO connection VALUES (9, 74, '2010-12-17');
@@ -4345,3 +4317,4 @@ INSERT INTO Industries(id, country, industry) VALUES(1833, "Zimbabwe", "fertiliz
 INSERT INTO Industries(id, country, industry) VALUES(1834, "Zimbabwe", "clothing and footwear");
 INSERT INTO Industries(id, country, industry) VALUES(1835, "Zimbabwe", "foodstuffs");
 INSERT INTO Industries(id, country, industry) VALUES(1836, "Zimbabwe", "beverages");
+
