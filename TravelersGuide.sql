@@ -106,6 +106,45 @@ BEGIN
 END//
 DELIMITER ;
 
+CREATE TABLE RecArchive (
+    userID INT REFERENCES Users(userID),
+    name VARCHAR(40) REFERENCES Country(name),
+    stars INT,
+    opinion VARCHAR(200),
+    updatedAt DATE,
+    PRIMARY KEY(userID, name)
+);
+
+DELIMITER //
+CREATE TRIGGER RecInsert
+BEFORE INSERT ON Recommendation
+FOR EACH ROW
+BEGIN
+    SET NEW.updatedAt = CURRENT_DATE;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER RecUpdate
+BEFORE UPDATE ON Recommendation
+FOR EACH ROW
+BEGIN
+    SET NEW.updatedAt = CURRENT_DATE;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE ARCHIVE(cutoff DATE)
+BEGIN
+    INSERT INTO RecArchive
+    SELECT * FROM Recommendation as r
+        WHERE r.updatedAt < cutoff
+    ON DUPLICATE KEY UPDATE userID = r.userID, name = r.name, stars = r.stars, opinion = r.opinion, updatedAt = r.updatedAt;
+    DELETE FROM Recommendation
+    WHERE updatedAt < cutoff;
+END//
+DELIMITER ;
+
 INSERT INTO Country VALUES ("Afghanistan", "Ahmad Shah DURRANI unified the Pashtun tribes and founded Afghanistan in 1747. The country served as a buffer between the British and Russian Empires until it won independence from notional British control in 1919. A brief experiment in democracy ended in a 1973 coup and a 1978 communist counter-coup. The Soviet Union invaded in 1979 to support the tottering Afghan communist regime, touching off a long and destructive war. The USSR withdrew in 1989 under relentless pressure by internationally supported anti-communist mujahedin rebels. A series of subsequent civil wars saw Kabul finally fall in 1996 to the Taliban, a hardline Pakistani-sponsored movement that emerged in 1994 to end the country's civil war and anarchy. Following the 11 September 2001 terrorist attacks, a US, Allied, and anti-Taliban Northern Alliance military action toppled the Taliban for sheltering Osama BIN LADIN. The UN-sponsored Bonn Conference in 2001 established a process for political reconstruction that included the adoption of a new constitution, a presidential election in 2004, and National Assembly elections in 2005. In December 2004, Hamid KARZAI became the first democratically elected president of Afghanistan and the National Assembly was inaugurated the following December. KARZAI was re-elected in August 2009 for a second term. Despite gains toward building a stable central government, a resurgent Taliban and continuing provincial instability - particularly in the south and the east - remain serious challenges for the Afghan Government. ", 33.00, 65.00, 652230);
 
 INSERT INTO Country VALUES ("Akrotiri", "By terms of the 1960 Treaty of Establishment that created the independent Republic of Cyprus, the UK retained full sovereignty and jurisdiction over two areas of almost 254 square kilometers - Akrotiri and Dhekelia. The southernmost and smallest of these is the Akrotiri Sovereign Base Area, which is also referred to as the Western Sovereign Base Area. ", 34.37, 32.58, 123);

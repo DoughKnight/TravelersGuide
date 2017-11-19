@@ -33,6 +33,7 @@ CREATE TABLE Recommendation (
     name VARCHAR(40) REFERENCES Country(name),
     stars INT,
     opinion VARCHAR(200),
+    updatedAt DATE,
     PRIMARY KEY(userID, name)
 );
 
@@ -113,5 +114,44 @@ BEGIN
             (SELECT *
                 FROM Boundaries AS b2
                 WHERE b2.name1 = b1.name2 AND b2.name2 = b1.name1));
+END//
+DELIMITER ;
+
+CREATE TABLE RecArchive (
+    userID INT REFERENCES Users(userID),
+    name VARCHAR(40) REFERENCES Country(name),
+    stars INT,
+    opinion VARCHAR(200),
+    updatedAt DATE,
+    PRIMARY KEY(userID, name)
+);
+
+DELIMITER //
+CREATE TRIGGER RecInsert
+BEFORE INSERT ON Recommendation
+FOR EACH ROW
+BEGIN
+    SET NEW.updatedAt = CURRENT_DATE;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER RecUpdate
+BEFORE UPDATE ON Recommendation
+FOR EACH ROW
+BEGIN
+    SET NEW.updatedAt = CURRENT_DATE;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE ARCHIVE(cutoff DATE)
+BEGIN
+    INSERT INTO RecArchive
+    SELECT * FROM Recommendation as r
+        WHERE r.updatedAt < cutoff
+    ON DUPLICATE KEY UPDATE userID = r.userID, name = r.name, stars = r.stars, opinion = r.opinion, updatedAt = r.updatedAt;
+    DELETE FROM Recommendation
+    WHERE updatedAt < cutoff;
 END//
 DELIMITER ;
