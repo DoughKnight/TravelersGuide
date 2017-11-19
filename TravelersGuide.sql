@@ -80,6 +80,32 @@ BEGIN
 END//
 DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE reflectConnection()
+BEGIN
+    INSERT IGNORE INTO Connection
+    (SELECT c1.userID2, c1.userID1, c1.meetDate
+        FROM Connection c1
+        WHERE NOT EXISTS
+            (SELECT *
+                FROM Connection AS c2
+                WHERE c2.userID1 = c1.userID2 AND c2.userID2 = c1.userID1));
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE reflectBoundaries()
+BEGIN
+    INSERT IGNORE INTO Boundaries
+    (SELECT b1.name2, b1.name1, b1.length
+        FROM Boundaries b1
+        WHERE NOT EXISTS
+            (SELECT *
+                FROM Boundaries AS b2
+                WHERE b2.name1 = b1.name2 AND b2.name2 = b1.name1));
+END//
+DELIMITER ;
+
 INSERT INTO Country VALUES ("Afghanistan", "Ahmad Shah DURRANI unified the Pashtun tribes and founded Afghanistan in 1747. The country served as a buffer between the British and Russian Empires until it won independence from notional British control in 1919. A brief experiment in democracy ended in a 1973 coup and a 1978 communist counter-coup. The Soviet Union invaded in 1979 to support the tottering Afghan communist regime, touching off a long and destructive war. The USSR withdrew in 1989 under relentless pressure by internationally supported anti-communist mujahedin rebels. A series of subsequent civil wars saw Kabul finally fall in 1996 to the Taliban, a hardline Pakistani-sponsored movement that emerged in 1994 to end the country's civil war and anarchy. Following the 11 September 2001 terrorist attacks, a US, Allied, and anti-Taliban Northern Alliance military action toppled the Taliban for sheltering Osama BIN LADIN. The UN-sponsored Bonn Conference in 2001 established a process for political reconstruction that included the adoption of a new constitution, a presidential election in 2004, and National Assembly elections in 2005. In December 2004, Hamid KARZAI became the first democratically elected president of Afghanistan and the National Assembly was inaugurated the following December. KARZAI was re-elected in August 2009 for a second term. Despite gains toward building a stable central government, a resurgent Taliban and continuing provincial instability - particularly in the south and the east - remain serious challenges for the Afghan Government. ", 33.00, 65.00, 652230);
 
 INSERT INTO Country VALUES ("Akrotiri", "By terms of the 1960 Treaty of Establishment that created the independent Republic of Cyprus, the UK retained full sovereignty and jurisdiction over two areas of almost 254 square kilometers - Akrotiri and Dhekelia. The southernmost and smallest of these is the Akrotiri Sovereign Base Area, which is also referred to as the Western Sovereign Base Area. ", 34.37, 32.58, 123);

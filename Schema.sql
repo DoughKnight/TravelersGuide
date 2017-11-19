@@ -79,3 +79,39 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE reflectConnection()
+BEGIN
+    INSERT IGNORE INTO Connection
+    (SELECT c1.UID2, c2.UID1, c1.MeetDate
+        FROM Connection c1, Connection c2
+        WHERE c1.UID2 = c2.UID2 AND c1.UID1 = C2.UID1);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE reflectConnection()
+BEGIN
+    INSERT IGNORE INTO Connection
+    (SELECT c1.userID2, c1.userID1, c1.meetDate
+        FROM Connection c1
+        WHERE NOT EXISTS
+            (SELECT *
+                FROM Connection AS c2
+                WHERE c2.userID1 = c1.userID2 AND c2.userID2 = c1.userID1));
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE reflectBoundaries()
+BEGIN
+    INSERT IGNORE INTO Boundaries
+    (SELECT b1.name2, b1.name1, b1.length
+        FROM Boundaries b1
+        WHERE NOT EXISTS
+            (SELECT *
+                FROM Boundaries AS b2
+                WHERE b2.name1 = b1.name2 AND b2.name2 = b1.name1));
+END//
+DELIMITER ;
