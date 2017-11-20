@@ -33,6 +33,7 @@ CREATE TABLE Recommendation (
     name VARCHAR(40) REFERENCES Country(name),
     stars INT,
     opinion VARCHAR(200),
+    updatedAt DATE,
     PRIMARY KEY(userID, name)
 );
 
