@@ -31,14 +31,23 @@ public class TravelersGuide {
         String lName = reader.nextLine();
         System.out.print("Password: ");
         String password = reader.nextLine();
-        String SQL = "SELECT password FROM Users WHERE firstname = " + fName + " and lastName = " + lName + ";";
+        String SQL = "SELECT userID, psw FROM Users WHERE firstname=\"" + fName + "\" and lastname=\"" + lName + "\";";
         stmt = conc.createStatement();
-        rs = stmt.executeQuery(SQL); //CREATES SQL EXCEPTION
-        if (password.equals(rs.getString(2))) {
-            System.out.print("Login success");
-        } else {
-            System.out.print("Failure to log in");
+        rs = stmt.executeQuery(SQL);
+        while (rs.next()) {
+            if(password.equals(rs.getString(2))) {
+                if(rs.getInt(1) == -1) {
+                    System.out.println("Welcome administrator.");
+                    System.out.println("List of admin options here, leading to functions.");
+                }
+                else {
+                    System.out.println("Login success!");
+                    System.out.println("List of regular choices here, leading to funcitons.");
+                }
+                return;
+            }
         }
+        System.out.println("Failure to login.");
     }
 
     private static void guestMenu(Scanner reader, Connection conc) {
