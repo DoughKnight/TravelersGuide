@@ -22,7 +22,7 @@ public class TravelersGuide {
 	static final String DB_URL = "jdbc:mysql://localhost:3306/TravelersGuide";
 	static final String DB_DRV = "com.mysql.jdbc.Driver";
 	static final String DB_USER = "root";
-	static final String DB_PASSWD = "Riptz123";// "1frjxqsF4/t";
+	static final String DB_PASSWD = "password";// "1frjxqsF4/t";
 
 	private static void loginMenu(Scanner reader, Connection conc,
 			Statement stmt, ResultSet rs) throws SQLException {
