@@ -28,11 +28,11 @@ public class TravelersGuide {
     /**
      * @param args the command line arguments
      */
-    
+
     public static void travelersMainMenu(Connection connection) throws InterruptedException{
             Scanner reader = new Scanner(System.in);
-            
-           
+
+
             System.out.println("*********************************");
             System.out.println("*                               *");
             System.out.println("*                               *");
@@ -40,7 +40,7 @@ public class TravelersGuide {
             System.out.println("*                               *");
             System.out.println("*                               *");
             System.out.println("*********************************");
-            
+
             TimeUnit.SECONDS.sleep(1);
             System.out.println("");
             System.out.println("");
@@ -56,22 +56,22 @@ public class TravelersGuide {
             System.out.println("");
             System.out.print(">> ");
             Integer menuOption = reader.nextInt();
-            
+
             if(menuOption == 1){
                 travelersUserMenu(connection);
             }
-            
+
             if(menuOption == 2){
                 travelersCountryMenu(connection);
             }
-            
+
             if(menuOption == 3){
                 travelersAdminMenu(connection);
             }
-             
+
     }
-    
-    
+
+
     public static void travelersUserMenu(Connection connection) throws InterruptedException{
         System.out.println("");
         System.out.println("*********************************");
@@ -90,24 +90,24 @@ public class TravelersGuide {
         System.out.println("*********************************");
         System.out.println("");
         Scanner reader = new Scanner(System.in);
-        
-        
+
+
         System.out.print(">> ");
         Integer menuOption = reader.nextInt();
-        
+
         if(menuOption == 0){
             travelersMainMenu(connection);
         }
-        
+
     }
-    
+
     public static void funcUser1(Connection connection){
      try{
          System.out.println("Users: ");
          String SQL = "Select firstname, lastname from Users Order by firstname ASC";
          PreparedStatement pstmt = connection.prepareStatement(SQL);
          ResultSet resultSet = pstmt.executeQuery();
-         
+
          while(resultSet.next()){
                 System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
                 if(resultSet.next()){
@@ -116,18 +116,18 @@ public class TravelersGuide {
                         System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
                         if(resultSet.next()){
                             System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
-                         }  
+                         }
                     }
-                         
+
                 }
                 System.out.println("");
             }
-         
+
      }catch (SQLException ex){
-         
+
      }
-        
-        
+
+
     }
     public static void funcUser2(Connection connection, Scanner reader){
         try{
@@ -136,7 +136,7 @@ public class TravelersGuide {
             String SQL = "Select firstname,lastname from Users where country = '" + country +"'";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
             ResultSet resultSet = pstmt.executeQuery();
-            
+
             while(resultSet.next()){
                 System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
                 if(resultSet.next()){
@@ -145,23 +145,23 @@ public class TravelersGuide {
                         System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
                         if(resultSet.next()){
                             System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
-                         }  
+                         }
                     }
-                         
+
                 }
                 System.out.println("");
             }
         }catch(SQLException ex){
-            
+
         }
     }
     public static void funcUser3(Connection connection, String language){
         try{
             System.out.println("Users who also speak " + language + ": ");
-            String SQL = "Select firstname,lastname from Users where language = '" + language +"' order by firstname";
+            String SQL = "Select firstname,lastname from Users as subUsers WHERE EXISTS (Select firstname, lastname from Users where subUsers.language = '"+ language +"') order by firstname";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
             ResultSet resultSet = pstmt.executeQuery();
-            
+
             while(resultSet.next()){
                 System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
                 if(resultSet.next()){
@@ -170,22 +170,22 @@ public class TravelersGuide {
                         System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
                         if(resultSet.next()){
                             System.out.printf("%-9s %-9s ",resultSet.getString(1),resultSet.getString(2));
-                         }  
+                         }
                     }
-                         
+
                 }
                 System.out.println("");
             }
         }catch(SQLException ex){
-            
+            System.out.println(ex.getMessage());
         }
     }
     public static void funcUser4(Connection connection, Scanner reader, String userID) throws InterruptedException{
         try{
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date today = Calendar.getInstance().getTime();
-        
-        
+
+
         System.out.print("What is the user ID that you want to connect with?:  ");
         String uID = reader.nextLine();
         String SQL = "Insert into Connection(userID1,userID2,meetDate)VALUES (?,?,?)";
@@ -199,24 +199,31 @@ public class TravelersGuide {
             System.out.print(". ");
         }
         System.out.println("Insertion completed!");
-        
+
         }catch(SQLException ex){
             System.out.println(ex.getMessage());
-        } 
+        }
     }
-    public static void funcUser5(Connection connection, Scanner reader, String userID) throws InterruptedException{ 
+    public static void funcUser5(Connection connection, Scanner reader, String userID) throws InterruptedException{
         try{
-            System.out.println("Current Connection: ");
-            String SQL = "Select userID1,userID2,meetDate from Connection where " + userID + " = userID1 order by meetDate DESC";
+
+            String SQL = "Select userID1,userID2,meetDate from Connection where " + userID + " = userID1 order by userID2 DESC";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
-            ResultSet resultSet = pstmt.executeQuery();       
+            ResultSet resultSet = pstmt.executeQuery();
+
+            System.out.println("Current Connections: ");
+            String count = "";
             while(resultSet.next()){
                 System.out.printf("%-7s %-7s %12s \n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3));
+
               }
+
+
+
         }catch(SQLException ex){
-            
+            System.out.println(ex.getMessage());
         }
-        
+
         try{
             System.out.print("Which connection do you want to delete? Please enter the userID of the conflicting person: ");
             String inputID = reader.nextLine();
@@ -232,30 +239,38 @@ public class TravelersGuide {
                 }
                 System.out.println("Deletion completed!");
             }else{}
-            
+
         }catch(SQLException ex){
             System.out.println(ex.getMessage());
         }
     }
     public static void funcUser6(Connection connection,String userID){
-        try{
+       try{
             System.out.println("Current Connections: ");
-            String SQL = "Select firstname, lastname, meetDate from Connection left join TravelersGuide.Users on " + userID + " = userID1 order by meetDate DESC";
+            String SQL = "Select user.firstname, user.lastname, con.meetDate from Connection as con, Users as user Where con.userID1 = " + userID + " and con.userID2 = user.userID";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
             ResultSet resultSet = pstmt.executeQuery();
-            
+
             while(resultSet.next()){
-                System.out.printf("%-7s %-10s ",resultSet.getString(1),resultSet.getString(2));
-                if(resultSet.next()){
-                    System.out.printf("%-7s %-10s  %12s\n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3));
-                }
+                System.out.printf("%-7s %-10s %-12s\n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3));
               }
         }catch(SQLException ex){
-            
+
+        }
+
+        try{
+            String SQL = "Select count(userID1) FROM Connection where userID1 = '" + userID + "' Group By userID1";
+            PreparedStatement pstmt1 = connection.prepareStatement(SQL);
+            ResultSet resultSet = pstmt1.executeQuery();
+            if(resultSet.next()){
+                System.out.println(resultSet.getString(1) + " total connections.");
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getMessage());
         }
     }
     public static void funcUser7(Connection connection,Scanner reader){
-        try{ 
+        try{
                 System.out.print("Create a new recommendation, enter in uID: ");
                 Integer uIDInput = reader.nextInt();
                 String whiteSpaec = reader.nextLine();
@@ -266,7 +281,7 @@ public class TravelersGuide {
                 whiteSpaec = reader.nextLine();
                 System.out.print("Enter in the recommendation: ");
                 String recInput = reader.nextLine();
-                String SQL = 
+                String SQL =
                 "INSERT into Recommendation(userID, name,stars,opinion)" +  "VALUES (?,?,?,?)";
                 PreparedStatement pstmt = connection.prepareStatement(SQL);
                 pstmt.setInt(1, uIDInput);
@@ -275,15 +290,15 @@ public class TravelersGuide {
                 pstmt.setString(4, recInput);
                 pstmt.executeUpdate();
                 //connection.commit();
-               
-                
+
+
                 }
-            catch (SQLException ex){                
+            catch (SQLException ex){
             }
-            
+
     }
     public static void funcUser8(Connection connection){
-        try{          
+        try{
                 System.out.println("Current Recommendations: ");
                 String SQL = "SELECT userID,name,stars,opinion FROM Recommendation";
                 PreparedStatement pstmt = connection.prepareStatement(SQL);
@@ -292,12 +307,12 @@ public class TravelersGuide {
                     System.out.printf("%d\t%s\t%d\t%s\t\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getInt(3),resultSet.getString(4));
                 }
                 }
-            catch (SQLException ex){                
+            catch (SQLException ex){
             }
     }
     public static void funcUser9(Connection connection, Scanner reader, String userID) throws InterruptedException{
         System.out.print("Please type in new password: ");String password = reader.nextLine();
-        
+
         try{
             String SQL = "UPDATE Users SET psw = '" + password  + "' WHERE userID = " + userID;
             PreparedStatement pstmt = connection.prepareStatement(SQL);
@@ -311,7 +326,7 @@ public class TravelersGuide {
             System.out.println(ex.getMessage());
         }
     }
-    
+
     public static void travelersCountryMenu(Connection connection) throws InterruptedException{
         System.out.println("");
         System.out.println("*********************************");
@@ -331,15 +346,15 @@ public class TravelersGuide {
         System.out.println("*********************************");
         System.out.println("");
         Scanner reader = new Scanner(System.in);
-        
-        
+
+
         System.out.print(">> ");
         Integer menuOption = reader.nextInt();
-        
+
         if(menuOption == 0){
             travelersMainMenu(connection);
         }
-         
+
     }
     public static void funcCountry1(Connection connection){
         try{
@@ -347,29 +362,31 @@ public class TravelersGuide {
             String SQL = "Select name from Country";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
             ResultSet resultSet = pstmt.executeQuery();
-            
             while(resultSet.next()){
                 System.out.printf("%-30s ",resultSet.getString(1));
                 if(resultSet.next()){
                     System.out.printf("%-30s ",resultSet.getString(1));
+
                     if(resultSet.next()){
                         System.out.printf("%-30s ",resultSet.getString(1));
+
                         if(resultSet.next()){
                             System.out.printf("%-30s ",resultSet.getString(1));
-                         }  
+
+                         }
                     }
-                         
+
                 }
                 System.out.println("");
             }
         }catch (SQLException ex){
-            
+            System.out.println(ex.getMessage());
         }
     }
     public static void funcCountry2(Connection connection, Scanner reader){
         System.out.print("Please enter the name of the country you're searching for: ");
         String country = reader.nextLine();
-       try{ 
+       try{
         String SQL = "SELECT * FROM Country WHERE Country.name = '" + country +"'";
         PreparedStatement pstmt = connection.prepareStatement(SQL);
         ResultSet resultSet = pstmt.executeQuery();
@@ -383,16 +400,16 @@ public class TravelersGuide {
                 }else{
                     System.out.println(sent + ".");
                 }
-                 
+
             }
         }
-        
+
            }catch (SQLException ex){
                System.out.println(ex.getMessage());
            }
     }
     public static void funcCountry3(Connection connection, Scanner reader){
-        
+
     }
     public static void funcCountry4(Connection connection, Scanner reader, String userCountry){
       try{
@@ -407,38 +424,38 @@ public class TravelersGuide {
           while(resultSet.next()){
               System.out.printf("%-10s\t%.2f km\n", resultSet.getString(1),(resultSet.getFloat(2) * 100));
           }
-          
+
       }catch (SQLException ex){
-          
-      } 
+
+      }
     }
-    public static void funcCountry5(Connection connection, Scanner reader){             
+    public static void funcCountry5(Connection connection, Scanner reader){
             try{System.out.print("Please enter in the city for the boundaries you wish to know: ");
-                String countryInput = reader.nextLine(); 
-                String SQL = 
+                String countryInput = reader.nextLine();
+                String SQL =
                 "SELECT name2 FROM Boundaries WHERE Boundaries.name1 = ?";
                 PreparedStatement pstmt = connection.prepareStatement(SQL);
                 pstmt.setString(1, countryInput);
                 ResultSet resultSet = pstmt.executeQuery();
                 while(resultSet.next()){
-                    System.out.printf("%s\t\n",resultSet.getString(1));                 
+                    System.out.printf("%s\t\n",resultSet.getString(1));
                 }
-                
+
                 }
-            catch (SQLException ex){                
+            catch (SQLException ex){
             }
 }
     public static void funcCountry6(Connection connection, Scanner reader){
-        
+
     }
     public static void funcCountry7(Connection connection,String userCountry, Scanner reader){
     try{
         System.out.print("Please enter in the country you wish to reach: ");
         String inputCountry = reader.nextLine();
-        
+
         System.out.print("Distance from "+ userCountry + " to " + inputCountry + ": ");
-        String SQL = "SELECT TRUNCATE((SQRT(POWER((dest.longitude - origin.longitude), 2) + POWER((dest.latitude - origin.latitude), 2))),4) as dist " 
-                        + "FROM Country as origin, Country as dest " 
+        String SQL = "SELECT TRUNCATE((SQRT(POWER((dest.longitude - origin.longitude), 2) + POWER((dest.latitude - origin.latitude), 2))),4) as dist "
+                        + "FROM Country as origin, Country as dest "
                         + "WHERE origin.name <> dest.name "
                         + "AND origin.name = '" + userCountry + "' "
                         + "AND dest.name = '"+ inputCountry + "' ";
@@ -448,16 +465,16 @@ public class TravelersGuide {
                     System.out.printf("%.2f km\n",(resultSet.getFloat(1) * 100));
                 }
                 }
-            catch (SQLException ex){                
+            catch (SQLException ex){
             }
     }
     public static void funcCountry8(Connection connection, Scanner reader){
-         try{          
+         try{
                 System.out.print("Please enter in the two countries separated by space: ");
                 String[] input = reader.nextLine().split(" ");
                 System.out.print("Distance from " + input[0] + " to " + input[1] + ": ");
-                String SQL = "SELECT TRUNCATE((SQRT(POWER((dest.longitude - origin.longitude), 2) + POWER((dest.latitude - origin.latitude), 2))),4) as dist " 
-                        + "FROM Country as origin, Country as dest " 
+                String SQL = "SELECT TRUNCATE((SQRT(POWER((dest.longitude - origin.longitude), 2) + POWER((dest.latitude - origin.latitude), 2))),4) as dist "
+                        + "FROM Country as origin, Country as dest "
                         + "WHERE origin.name <> dest.name "
                         + "AND origin.name = '" + input[0] + "' "
                         + "AND dest.name = '"+ input[1] + "' ";
@@ -467,17 +484,17 @@ public class TravelersGuide {
                     System.out.printf("%.2f km\n",(resultSet.getFloat(1) * 100));
                 }
                 }
-            catch (SQLException ex){                
+            catch (SQLException ex){
             }
     }
     public static void funcCountry9(Connection connection, String userCountry, Scanner reader){
-         try{          
+         try{
                 System.out.print("Who do you want to reach?: ");
-                String[] input = reader.nextLine().split(" ");                
+                String[] input = reader.nextLine().split(" ");
                 System.out.print("Distance to " + input[0] + " " + input[1] + ": ");
                // statement = connection.createStatement();
-                String SQL = "SELECT TRUNCATE((SQRT(POWER((destUserCountry.longitude - userCountry.longitude), 2) + POWER((destUserCountry.latitude - userCountry.latitude), 2))),4) as dist " 
-                        + "FROM (SELECT longitude, latitude FROM Country, Users WHERE Users.firstname = '" + input[0] + "' AND Users.lastname = '" + input[1] + "' AND Users.country = Country.name) as destUserCountry, " 
+                String SQL = "SELECT TRUNCATE((SQRT(POWER((destUserCountry.longitude - userCountry.longitude), 2) + POWER((destUserCountry.latitude - userCountry.latitude), 2))),4) as dist "
+                        + "FROM (SELECT longitude, latitude FROM Country, Users WHERE Users.firstname = '" + input[0] + "' AND Users.lastname = '" + input[1] + "' AND Users.country = Country.name) as destUserCountry, "
                         + "(SELECT longitude, latitude FROM Country WHERE '" + userCountry + "' = Country.name) as userCountry";
                 PreparedStatement pstmt = connection.prepareStatement(SQL);
                 ResultSet resultSet = pstmt.executeQuery();
@@ -485,11 +502,11 @@ public class TravelersGuide {
                     System.out.printf("%.2f"+" km\n",(resultSet.getFloat(1) * 100));
                 }
                 }
-            catch (SQLException ex){                
+            catch (SQLException ex){
             }
     }
-    
-    
+
+
     public static void travelersAdminMenu(Connection connection) throws InterruptedException{
         System.out.println("");
         System.out.println("*********************************");
@@ -504,16 +521,16 @@ public class TravelersGuide {
         System.out.println("*********************************");
         System.out.println("");
         Scanner reader = new Scanner(System.in);
-        
-        
+
+
         System.out.print(">> ");
         Integer menuOption = reader.nextInt();
-        
+
         if(menuOption == 0){
             travelersMainMenu(connection);
         }
     }
-    
+
  public static void funcAdmin1(Connection connection, Scanner reader){
      try{
          System.out.println("UserID    Name                  Age   Language  Country                   E-mail                         Password     ");
@@ -521,12 +538,12 @@ public class TravelersGuide {
          PreparedStatement pstmt = connection.prepareStatement(SQL);
          ResultSet resultSet = pstmt.executeQuery();
          while(resultSet.next()){
-                System.out.printf("%-9s %-9s %-11s %-5s %-9s %-25s %-30s %-20s \n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5),resultSet.getString(6),resultSet.getString(7),resultSet.getString(8));         
+                System.out.printf("%-9s %-9s %-11s %-5s %-9s %-25s %-30s %-20s \n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5),resultSet.getString(6),resultSet.getString(7),resultSet.getString(8));
                 }
-            }catch (SQLException ex){       
-        }   
+            }catch (SQLException ex){
+        }
      }
- 
+
  public static void funcAdmin2(Connection connection, Scanner reader) throws InterruptedException{
      System.out.println("Creating User...");
      System.out.print("Enter in new uID: "); String uID = reader.nextLine();
@@ -536,7 +553,7 @@ public class TravelersGuide {
      System.out.print("Enter in primary language: ");String language = reader.nextLine();
      System.out.print("Enter in email: ");String email = reader.nextLine();
      System.out.print("Enter in password: ");String password = reader.nextLine();
-     
+
      try{
          String SQL = "Insert into Users(userID,firstname,lastname,psw,age,email,language,country) VALUES(?,?,?,?,?,?,?,?)";
          PreparedStatement pstmt = connection.prepareStatement(SQL);
@@ -549,19 +566,19 @@ public class TravelersGuide {
          pstmt.setString(7,language);
          pstmt.setString(8,country);
          pstmt.executeUpdate();
-         
+
          for(int i = 0; i < 4; i++){
             TimeUnit.SECONDS.sleep(1);
             System.out.print(". ");
         }
         System.out.println("Insertion completed!");
-         
+
      }catch(SQLException ex){
-         
+
      }
-     
+
  }
- 
+
  public static void funcAdmin3(Connection connection, Scanner reader) throws InterruptedException{
      try{
          System.out.println("UserID    Name                  Age   Language  Country                   E-mail                         Password     ");
@@ -569,12 +586,12 @@ public class TravelersGuide {
          PreparedStatement pstmt = connection.prepareStatement(SQL);
          ResultSet resultSet = pstmt.executeQuery();
          while(resultSet.next()){
-                System.out.printf("%-9s %-9s %-11s %-5s %-9s %-25s %-30s %-20s \n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5),resultSet.getString(6),resultSet.getString(7),resultSet.getString(8));         
+                System.out.printf("%-9s %-9s %-11s %-5s %-9s %-25s %-30s %-20s \n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5),resultSet.getString(6),resultSet.getString(7),resultSet.getString(8));
                 }
-            }catch (SQLException ex){       
-        }   
-     
- 
+            }catch (SQLException ex){
+        }
+
+
      try{
         System.out.print("Which user do you wish to delete? Please enter in their userID: "); String delete = reader.nextLine();
         String SQL = "Delete from Users where userID = " + delete;
@@ -585,10 +602,10 @@ public class TravelersGuide {
             System.out.print(". ");
         }
         System.out.println("Deletion completed!");
-        
+
      }catch(SQLException ex){
     }
- }  
+ }
 
 public static void funcAdmin4(Connection connection, Scanner reader){
      try{
@@ -596,7 +613,7 @@ public static void funcAdmin4(Connection connection, Scanner reader){
             String SQL = "Select firstname, lastname, meetDate from Connection left join TravelersGuide.Users on Users.userID = userID1 or Users.userID = userID2 order by meetDate DESC";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
             ResultSet resultSet = pstmt.executeQuery();
-            
+
             while(resultSet.next()){
                 System.out.printf("%-7s %-10s ",resultSet.getString(1),resultSet.getString(2));
                 if(resultSet.next()){
@@ -604,10 +621,10 @@ public static void funcAdmin4(Connection connection, Scanner reader){
                 }
               }
         }catch(SQLException ex){
-            
+
         }
-    
-} 
+
+}
 
 public static void funcAdmin5(Connection connection, Scanner reader){
     try{
@@ -618,36 +635,36 @@ public static void funcAdmin5(Connection connection, Scanner reader){
         while(resultSet.next()){
             System.out.printf("%-9s %-9s %-8s %-20s %-10s", resultSet.getString(1), resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5));
         }
-        
+
     }catch(SQLException ex){
-        
+
     }
 }
-   
-   
-    
-    
-    
-    
+
+
+
+
+
+
     public static void main(String[] args) throws InterruptedException {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
         //PreparedStatement pstmt = null;
         Scanner reader = new Scanner(System.in);
-        
+
         try{
             connection = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWD);
-            
-            //travelersMainMenu(connection);
-        
-        funcUser9(connection,reader,"35");  
-        travelersCountryMenu(connection);
-            
-            
 
-// #3?     
-//            try{ 
+            //travelersMainMenu(connection);
+
+        funcUser6(connection,"34");
+        travelersCountryMenu(connection);
+
+
+
+// #3?
+//            try{
 //                System.out.print("Find what users are from which country: ");
 //                String countryInput = reader.nextLine();
 //                System.out.println(countryInput);
@@ -659,10 +676,10 @@ public static void funcAdmin5(Connection connection, Scanner reader){
 //                    System.out.printf("%s\t%s\t%d\t\n",resultSet.getString(1),resultSet.getString(2),resultSet.getInt(3));
 //                }
 //                }
-//            catch (SQLException ex){                
+//            catch (SQLException ex){
 //            }
-// #15       
-//            try{ 
+// #15
+//            try{
 //                System.out.print("Create a new recommendation, enter in uID: ");
 //                Integer uIDInput = reader.nextInt();
 //                String whiteSpaec = reader.nextLine();
@@ -673,7 +690,7 @@ public static void funcAdmin5(Connection connection, Scanner reader){
 //                whiteSpaec = reader.nextLine();
 //                System.out.print("Enter in the recommendation: ");
 //                String recInput = reader.nextLine();
-//                String SQL = 
+//                String SQL =
 //                "INSERT into Recommendation(userID, name,stars,opinion)" +  "VALUES (?,?,?,?)";
 //                pstmt = connection.prepareStatement(SQL);
 //                pstmt.setInt(1, uIDInput);
@@ -682,13 +699,13 @@ public static void funcAdmin5(Connection connection, Scanner reader){
 //                pstmt.setString(4, recInput);
 //                pstmt.executeUpdate();
 //                //connection.commit();
-//               
-//                
+//
+//
 //                }
-//            catch (SQLException ex){                
+//            catch (SQLException ex){
 //            }
-            
-//            try{          
+
+//            try{
 //                System.out.println("Current Recommendations: ");
 //               // statement = connection.createStatement();
 //                String SQL = "SELECT userID,name,stars,opinion FROM Recommendation";
@@ -698,11 +715,11 @@ public static void funcAdmin5(Connection connection, Scanner reader){
 //                    System.out.printf("%d\t%s\t%d\t%s\t\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getInt(3),resultSet.getString(4));
 //                }
 //                }
-//            catch (SQLException ex){                
+//            catch (SQLException ex){
 //            }
-            
 
-            
+
+
 
 
 
@@ -714,23 +731,21 @@ public static void funcAdmin5(Connection connection, Scanner reader){
             //while(resultSet.next()){
              //   System.out.printf("%d\t%d\t\n", resultSet.getInt(1), resultSet.getInt(2));
             //}
-            
-            
-            
-            
-            
+
+
+
+
+
         }catch (SQLException ex){
         }finally{
-            
+
                     try{
-                       
-                    
+
+
                         connection.close();
                     }catch (SQLException ex){
                     }
                 }
-           }    
+           }
         }
         // TODO code application logic here
-    
-   
