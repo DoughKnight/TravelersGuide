@@ -159,7 +159,7 @@ public class TravelersGuide{
 			} else if (option.equals("6")) {
 				funcUser6(conc,user_userID );
 			} else if (option.equals("7")) {
-				funcUser7(conc, reader);
+				funcUser7(conc, reader,user_userID);
 			} else if (option.equals("8")) {
 				funcUser8(conc);
 			} else if (option.equals("9")) {
@@ -281,7 +281,7 @@ public class TravelersGuide{
         private static void funcUser5(Connection connection, Scanner reader, String userID) throws InterruptedException{
         try{
 
-            String SQL = "Select userID1,userID2,meetDate from Connection where " + userID + " = userID1 order by userID2 DESC";
+            String SQL = "Select firstname,lastname,meetDate from Connection,Users Where " + userID + " = userID1 and Users.userID = userID2 order by meetDate DESC";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
             ResultSet resultSet = pstmt.executeQuery();
 
@@ -343,28 +343,32 @@ public class TravelersGuide{
             System.out.println(ex.getMessage());
         }
     }
-        private static void funcUser7(Connection connection,Scanner reader){
+        private static void funcUser7(Connection connection,Scanner reader, String userID) throws InterruptedException{
         try{
-                System.out.print("Create a new recommendation, enter in uID: ");
-                Integer uIDInput = reader.nextInt();
-                String whiteSpaec = reader.nextLine();
+                System.out.println("Creating new recommendation: ");
+
                 System.out.print("Enter in country: ");
                 String countryInput = reader.nextLine();
                 System.out.print("Enter in stars: ");
-                Integer starsInput = reader.nextInt();
-                whiteSpaec = reader.nextLine();
+                String starsInput = reader.nextLine();
+
                 System.out.print("Enter in the recommendation: ");
                 String recInput = reader.nextLine();
                 String SQL =
                 "INSERT into Recommendation(userID, name,stars,opinion)" +  "VALUES (?,?,?,?)";
                 PreparedStatement pstmt = connection.prepareStatement(SQL);
-                pstmt.setInt(1, uIDInput);
+                pstmt.setString(1, userID);
                 pstmt.setString(2,countryInput);
-                pstmt.setInt(3, starsInput);
+                pstmt.setString(3, starsInput);
                 pstmt.setString(4, recInput);
                 pstmt.executeUpdate();
-                //connection.commit();
 
+                for(int i = 0; i < 4; i++){
+                    TimeUnit.SECONDS.sleep(1);
+                    System.out.print(". ");
+                }
+                System.out.println("Recommendation added!");
+                //connection.commit();
 
                 }
             catch (SQLException ex){
@@ -374,12 +378,12 @@ public class TravelersGuide{
         private static void funcUser8(Connection connection){
         try{
                 System.out.println("Current Recommendations: ");
-                String SQL = "SELECT userID,name,stars,opinion FROM Recommendation";
+                String SQL = "SELECT firstname,lastname,name,stars,opinion FROM Recommendation, Users where Recommendation.userID = Users.userID";
                 PreparedStatement pstmt = connection.prepareStatement(SQL);
                 ResultSet resultSet = pstmt.executeQuery();
-                System.out.println("userID	Country         Stars	Opinion	");
+                System.out.println("Name	         Country    Stars  Opinion");
                 while(resultSet.next()){
-                    System.out.printf("%d\t%s\t        %d\t%s\t\n",resultSet.getInt(1),resultSet.getString(2),resultSet.getInt(3),resultSet.getString(4));
+                    System.out.printf("%-7s %-7s %-10s %-4s %-20s\n",resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5));
                 }
                 }
             catch (SQLException ex){
@@ -492,7 +496,9 @@ public class TravelersGuide{
         PreparedStatement pstmt = connection.prepareStatement(SQL);
         ResultSet resultSet = pstmt.executeQuery();
         while(resultSet.next()){
-            System.out.println("Name: " + resultSet.getString(1) + " Location: (" + resultSet.getInt(3) + "," + resultSet.getInt(4) +") Area: " + resultSet.getInt(5) + "km squared.");
+            System.out.println("Name: " + resultSet.getString(1));
+            System.out.println("Location: (" + resultSet.getInt(3) + "," + resultSet.getInt(4) +")");
+            System.out.println("Area: " + resultSet.getInt(5) + "km squared.");
             String[] desc = resultSet.getString(2).split("\\.");
             System.out.print("Description: ");
             for (String sent : desc){
@@ -590,15 +596,16 @@ public class TravelersGuide{
          try{
                 System.out.print("Who do you want to reach?: ");
                 String[] input = reader.nextLine().split(" ");
-                System.out.print("Distance to " + input[0] + " " + input[1] + ": ");
+
                // statement = connection.createStatement();
-                String SQL = "SELECT TRUNCATE((SQRT(POWER((destUserCountry.longitude - userCountry.longitude), 2) + POWER((destUserCountry.latitude - userCountry.latitude), 2))),4) as dist "
-                        + "FROM (SELECT longitude, latitude FROM Country, Users WHERE Users.firstname = '" + input[0] + "' AND Users.lastname = '" + input[1] + "' AND Users.country = Country.name) as destUserCountry, "
+                String SQL = "SELECT destUserCountry.name, TRUNCATE((SQRT(POWER((destUserCountry.longitude - userCountry.longitude), 2) + POWER((destUserCountry.latitude - userCountry.latitude), 2))),4) as dist "
+                        + "FROM (SELECT longitude, latitude,name FROM Country, Users WHERE Users.firstname = '" + input[0] + "' AND Users.lastname = '" + input[1] + "' AND Users.country = Country.name) as destUserCountry, "
                         + "(SELECT longitude, latitude FROM Country WHERE '" + userCountry + "' = Country.name) as userCountry";
                 PreparedStatement pstmt = connection.prepareStatement(SQL);
                 ResultSet resultSet = pstmt.executeQuery();
                 while(resultSet.next()){
-                    System.out.printf("%.2f"+" km\n",(resultSet.getFloat(1) * 100));
+                    System.out.print("Distance to " + input[0] + " " + input[1]);
+                    System.out.printf(" in %s %.2f"+" km\n",resultSet.getString(1),(resultSet.getFloat(2) * 100));
                 }
                 }
             catch (SQLException ex){
