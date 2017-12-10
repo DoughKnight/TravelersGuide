@@ -5,6 +5,7 @@
  */
 package travelersguide;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -768,8 +769,9 @@ public class TravelersGuide {
         System.out.println("* 1. View All Users             *");
         System.out.println("* 2. Add Users                  *");
         System.out.println("* 3. Delete User                *");
-        System.out.println("* 3. View all Connections       *");
-        System.out.println("* 4. View all Recommendations   *");
+        System.out.println("* 4. View all Connections       *");
+        System.out.println("* 5. View all Recommendations   *");
+        System.out.println("* 6. Archive Recommendations    *");
         System.out.println("*                               *");
         System.out.println("* 0. Return to Main Menu        *");
         System.out.println("*********************************");
@@ -789,6 +791,8 @@ public class TravelersGuide {
                 funcAdmin4(conc, reader);
             } else if (option.equals("5")) {
                 funcAdmin5(conc, reader);
+            } else if (option.equals("6")) {
+                funcAdmin6(conc, reader);
             } else if (option.equals("0")) {
                 travelersMainMenu(conc, reader);
                 break;
@@ -923,14 +927,14 @@ public class TravelersGuide {
     }
 
     private static void funcAdmin5(Connection connection, Scanner reader) {
+        String SQL = "Select * from Recommendation";
         try {
-            String SQL = "Select * from Recommendation";
             PreparedStatement pstmt = connection.prepareStatement(SQL);
             ResultSet resultSet = pstmt.executeQuery();
             System.out
                     .println("userID    Country   Stars    Opinion              Last Updated");
             while (resultSet.next()) {
-                System.out.printf("%-9s %-9s %-8s %-20s %-10s",
+                System.out.printf("%-9s %-9s %-8s %-20s %-10s\n",
                         resultSet.getString(1), resultSet.getString(2),
                         resultSet.getString(3), resultSet.getString(4),
                         resultSet.getString(5));
@@ -940,6 +944,29 @@ public class TravelersGuide {
 
         }
     }
+    
+    private static void funcAdmin6(Connection connection, Scanner reader) {
+        System.out.println("Enter a cut-off date for archives (yyyy-MM-dd) or \"now\":");
+        String dateStr = reader.nextLine();
+        CallableStatement cstmt = null;
+        String SQL = "{CALL ARCHIVE(?)}";
+        String finalDate;
+        if(dateStr.equals("now") || dateStr.equals("\"now\"")) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Date today = Calendar.getInstance().getTime();
+            finalDate = df.format(today);
+        }
+        else finalDate = dateStr;
+        System.out.println("Recommendations before " + finalDate + " will be archived. ");
+        try {
+            cstmt = connection.prepareCall(SQL);
+            cstmt.setString(1, finalDate);
+            cstmt.execute();
+        } catch (SQLException ex) {
+
+        }
+    }
+    
 
     /**
      * @param args the command line arguments

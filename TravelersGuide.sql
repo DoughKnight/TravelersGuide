@@ -4385,4 +4385,9 @@ INSERT INTO Industries(id, country, industry) VALUES(1834, "Zimbabwe", "clothing
 INSERT INTO Industries(id, country, industry) VALUES(1835, "Zimbabwe", "foodstuffs");
 INSERT INTO Industries(id, country, industry) VALUES(1836, "Zimbabwe", "beverages");
 
-
+INSERT INTO Recommendation(userID, name,stars,opinion, updatedAt) VALUES (12,'Sweden',5,'Sweden is very modern', '2017-12-09');
+INSERT INTO Recommendation(userID, name,stars,opinion, updatedAt) VALUES (-1,'United States',4,'Wow, so free', '2017-12-09');
+INSERT INTO Recommendation(userID, name,stars,opinion, updatedAt) VALUES (124,'Egypt',3,'There were no Yu-Gi-Oh cards', '2017-12-09');
+INSERT INTO Recommendation(userID, name,stars,opinion, updatedAt) VALUES (220,'Japan',4,'Japan has a deer petting park', '2017-12-09');
+INSERT INTO Recommendation(userID, name,stars,opinion, updatedAt) VALUES (5,'Germany',4,'Germany has great food', '2017-12-09');
+INSERT INTO Recommendation(userID, name,stars,opinion, updatedAt) VALUES (-1,'Sweden',5,'Somebody told me it was very modern. It was.', '2017-12-09');
